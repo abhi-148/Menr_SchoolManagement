@@ -1,48 +1,58 @@
 const {
   getDashboardStats,
-  getSchoolDashboardStats
+  getSchoolDashboardStats,
 } = require("../repositories/dashboardRepository");
 
 const getDashboardService = async (user) => {
-
-  const dashboard =
-    await getDashboardStats();
-
-  if (user.role === "SUPER_ADMIN") {
-
-    return dashboard;
-
+  if (!user) {
+    throw new Error("Unauthorized user.");
   }
 
-  if (user.role === "SCHOOL_ADMIN") {
+  switch (user.role) {
+    case "SUPER_ADMIN": {
+      return await getDashboardStats();
+    }
 
-  return await getSchoolDashboardStats(
-    user.schoolId
-  );
+    case "SCHOOL_ADMIN": {
+      if (!user.schoolId) {
+        throw new Error("School ID not found.");
+      }
 
-}
+      return await getSchoolDashboardStats(user.schoolId);
+    }
 
- if (user.role === "STAFF") {
+    case "STAFF": {
+      if (!user.school_id && !user.schoolId) {
+        throw new Error("School ID not found.");
+      }
 
-  return await getSchoolDashboardStats(
-    user.school_id
-  );
+      return await getSchoolDashboardStats(
+        user.school_id || user.schoolId
+      );
+    }
 
-}
+    case "STUDENT": {
+      return {
+        statistics: {
+          totalStudents: 1,
+          presentToday: 0,
+          absentToday: 0,
+          attendancePercentage: 0,
+        },
 
-  if (user.role === "STUDENT") {
+        latestStudents: [],
 
-    return {
-      message:
-        "Welcome Student"
-    };
+        latestStaff: [],
 
+        message: `Welcome ${user.full_name || "Student"}`,
+      };
+    }
+
+    default:
+      throw new Error("Invalid user role.");
   }
-
-  throw new Error("Invalid Role");
-
 };
 
 module.exports = {
-  getDashboardService
+  getDashboardService,
 };

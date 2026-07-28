@@ -168,25 +168,25 @@ function AddAdmissionFollowUp({
               Select Response Status
             </option>
 
-            <option value="INTERESTED">
-              INTERESTED
-            </option>
+            <option value="Interested">
+  Interested
+</option>
 
-            <option value="FOLLOW_UP_REQUIRED">
-              FOLLOW UP REQUIRED
-            </option>
+<option value="Not Interested">
+  Not Interested
+</option>
 
-            <option value="NOT_INTERESTED">
-              NOT INTERESTED
-            </option>
+<option value="Call Back">
+  Call Back
+</option>
 
-            <option value="ADMISSION_CONFIRMED">
-              ADMISSION CONFIRMED
-            </option>
+<option value="No Response">
+  No Response
+</option>
 
-            <option value="NO_RESPONSE">
-              NO RESPONSE
-            </option>
+<option value="Admission Confirmed">
+  Admission Confirmed
+</option>
           </select>
         </div>
 

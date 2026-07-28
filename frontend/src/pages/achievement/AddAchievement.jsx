@@ -81,19 +81,17 @@ function AddAchievement({
 
   };
 
-  const handleSubmit = (e) => {
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
-    e.preventDefault();
+  console.log("Form Data:", formData);
 
-    onAdd(formData);
+  onAdd(formData);
 
-    if (!editingAchievement) {
-
-      setFormData(initialState);
-
-    }
-
-  };
+  if (!editingAchievement) {
+    setFormData(initialState);
+  }
+};
 
   return (
 
@@ -186,14 +184,23 @@ function AddAchievement({
             Achievement Category
           </label>
 
-          <input
-            type="text"
-            name="achievement_category"
-            value={formData.achievement_category}
-            onChange={handleChange}
-            className="w-full border rounded-lg p-2"
-            placeholder="Sports / Academic / Cultural"
-          />
+          <select
+  name="achievement_category"
+  value={formData.achievement_category}
+  onChange={handleChange}
+  className="w-full border rounded-lg p-2"
+  required
+>
+  <option value="">Select Category</option>
+
+  <option value="Academic">Academic</option>
+
+  <option value="Sports">Sports</option>
+
+  <option value="Cultural">Cultural</option>
+
+  <option value="Technology">Technology</option>
+</select>
         </div>
 
         <div>

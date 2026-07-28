@@ -87,6 +87,11 @@ const feeStructureRoutes = require(
   "./src/routes/feeStructureRoutes"
 );
 
+const feeStructureComponentRoutes = require("./src/routes/feeStructureComponentRoutes");
+const feeInstallmentRoutes = require("./src/routes/feeInstallmentRoutes");
+const feeDiscountRoutes = require("./src/routes/feeDiscountRoutes");
+const feeConcessionRoutes = require("./src/routes/feeConcessionRoutes");
+
 const studentFeeRoutes = require(
   "./src/routes/studentFeeRoutes"
 );
@@ -263,10 +268,22 @@ app.use(
   feeStructureRoutes
 );
 
+
+app.use(
+  "/api/fee-structure-components",
+  feeStructureComponentRoutes
+);
+
+app.use("/api/fee-installments", feeInstallmentRoutes);
+
 app.use(
   "/api/student-fees",
   studentFeeRoutes
 );
+
+app.use("/api/fee-discounts", feeDiscountRoutes);
+
+app.use("/api/fee-concessions", feeConcessionRoutes);
 
 app.use(
 "/api/library-fine-payments",

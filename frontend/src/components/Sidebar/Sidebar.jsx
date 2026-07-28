@@ -20,7 +20,14 @@ CalendarDays,
 FileText,
 Clock3,
 Languages,
-Package
+Package,
+ChevronDown,
+ChevronRight,
+GraduationCap,
+Library,
+Wallet,
+BadgePercent,
+Settings
 } from "lucide-react";
 
 import {
@@ -48,6 +55,12 @@ localStorage.getItem("role") || "";
     localStorage.getItem("theme") ===
       "dark"
   );
+
+  const [openMenu, setOpenMenu] = useState("");
+
+const toggleMenu = (menu) => {
+  setOpenMenu(openMenu === menu ? "" : menu);
+};
 
  useEffect(() => {
 
@@ -93,12 +106,64 @@ localStorage.getItem("role") || "";
 
   };
 
+  useEffect(() => {
+
+  if (location.pathname.startsWith("/school")) {
+    setOpenMenu("school");
+  }
+
+  else if (
+    location.pathname.startsWith("/admission")
+  ) {
+    setOpenMenu("admission");
+  }
+
+  else if (
+    location.pathname.startsWith("/staff")
+  ) {
+    setOpenMenu("staff");
+  }
+
+  else if (
+    location.pathname.startsWith("/student")
+  ) {
+    setOpenMenu("student");
+  }
+
+  else if (
+    location.pathname.startsWith("/exam")
+  ) {
+    setOpenMenu("exam");
+  }
+
+  else if (
+    location.pathname.startsWith("/fee")
+  ) {
+    setOpenMenu("fees");
+  }
+
+}, [location.pathname]);
+
   const linkClass = (path) =>
     `flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ${
       location.pathname === path
         ? "bg-blue-600 text-white"
         : "hover:bg-slate-800"
     }`;
+
+    const menuButtonClass = (menu) =>
+  `flex items-center justify-between w-full px-3 py-3 rounded-lg transition-all duration-200 ${
+    openMenu === menu
+      ? "bg-blue-600 text-white"
+      : "hover:bg-slate-800"
+  }`;
+
+const subLinkClass = (path) =>
+  `flex items-center gap-3 ml-6 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
+    location.pathname === path
+      ? "bg-blue-500 text-white"
+      : "hover:bg-slate-800 text-gray-300"
+  }`;
 
   return (
     <>
@@ -504,6 +569,75 @@ localStorage.getItem("role") || "";
 </li>
 
 )}
+
+{(role === "SUPER_ADMIN" ||
+  role === "SCHOOL_ADMIN") && (
+
+<li>
+  <Link
+    to="/fee-structure-components"
+    className={linkClass("/fee-structure-components")}
+    onClick={() => setIsOpen(false)}
+  >
+    <Wallet size={20} />
+    Fee Structure Components
+  </Link>
+</li>
+
+)}
+
+
+{(role === "SUPER_ADMIN" ||
+  role === "SCHOOL_ADMIN") && (
+
+<li>
+  <Link
+    to="/fee-installments"
+    className={linkClass("/fee-installments")}
+    onClick={() => setIsOpen(false)}
+  >
+    <Wallet size={20} />
+    Fee Installments
+  </Link>
+</li>
+
+)}
+
+{(role === "SUPER_ADMIN" ||
+  role === "SCHOOL_ADMIN") && (
+
+<li>
+  <Link
+    to="/fee-discounts"
+    className={linkClass("/fee-discounts")}
+    onClick={() => setIsOpen(false)}
+  >
+    <BadgePercent size={20} />
+    Fee Discounts
+  </Link>
+</li>
+
+)}
+
+
+{(role === "SUPER_ADMIN" ||
+  role === "SCHOOL_ADMIN") && (
+
+<li>
+  <Link
+    to="/fee-concessions"
+    className={linkClass("/fee-concessions")}
+    onClick={() => setIsOpen(false)}
+  >
+    <Wallet size={20} />
+    Fee Concessions
+  </Link>
+</li>
+
+)}
+
+
+
 
 {(role === "SUPER_ADMIN" ||
   role === "SCHOOL_ADMIN") && (

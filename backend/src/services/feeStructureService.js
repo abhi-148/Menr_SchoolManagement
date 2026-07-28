@@ -4,72 +4,48 @@ const {
   getFeeStructuresByClass,
   updateFeeStructure,
   deleteFeeStructure
-} = require(
-  "../repositories/feeStructureRepository"
-);
+} = require("../repositories/feeStructureRepository");
 
-const createFeeStructureService =
-async (data) => {
+// Create
+const createFeeStructureService = async (data) => {
 
-  data.status = "active";
+  data.status = data.status || "active";
 
-  if (
-    data.created_by_role ===
-    "SCHOOL_ADMIN"
-  ) {
+  // Active Key Generate
+  data.active_key = `${data.school_id}_${data.batch_id}`;
 
-    const schoolClass =
-      await getFeeStructuresByClass(
-        data.school_class_id
-      );
-
-    // sirf marker hai, actual school validation
-    // next phase me karenge
-  }
-
-  return await createFeeStructure(
-    data
-  );
+  return await createFeeStructure(data);
 
 };
 
-const getAllFeeStructuresService =
-async (user) => {
+// Get All
+const getAllFeeStructuresService = async () => {
 
-  return await getAllFeeStructures(
-    user
-  );
+  return await getAllFeeStructures();
 
 };
 
-const getFeeStructuresByClassService =
-async (schoolClassId) => {
+// Get By Class (Temporary)
+// Isko Phase-2 me Get By Batch karenge
+const getFeeStructuresByClassService = async (schoolClassId) => {
 
-  return await getFeeStructuresByClass(
-    schoolClassId
-  );
-
-};
-
-const updateFeeStructureService =
-async (
-  id,
-  data
-) => {
-
-  return await updateFeeStructure(
-    id,
-    data
-  );
+  return await getFeeStructuresByClass(schoolClassId);
 
 };
 
-const deleteFeeStructureService =
-async (id) => {
+// Update
+const updateFeeStructureService = async (id, data) => {
 
-  return await deleteFeeStructure(
-    id
-  );
+  data.active_key = `${data.school_id}_${data.batch_id}`;
+
+  return await updateFeeStructure(id, data);
+
+};
+
+// Delete
+const deleteFeeStructureService = async (id) => {
+
+  return await deleteFeeStructure(id);
 
 };
 

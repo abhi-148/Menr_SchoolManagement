@@ -1,26 +1,41 @@
 const pool = require("../config/db");
 
 // Create Fee Structure
-const createFeeStructure = async (
-  data
-) => {
+// Create Fee Structure
+const createFeeStructure = async (data) => {
 
   const [result] = await pool.query(
     `INSERT INTO fee_structures
     (
-      school_class_id,
-      fee_type,
-      amount,
+      school_id,
+      batch_id,
+      academic_year_id,
+      total_amount,
+      due_date,
+      late_fee_rules,
+      payment_type,
+      number_of_installments,
       status,
-      created_by
+      active_key,
+      created_by,
+      updated_by
     )
-    VALUES (?, ?, ?, ?, ?)`,
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
-      data.school_class_id,
-      data.fee_type,
-      data.amount,
-      data.status,
-      data.created_by
+      data.school_id,
+      data.batch_id,
+      data.academic_year_id,
+      data.total_amount,
+      data.due_date,
+      data.late_fee_rules
+        ? JSON.stringify(data.late_fee_rules)
+        : null,
+      data.payment_type,
+      data.number_of_installments,
+      data.status || "active",
+      data.active_key,
+      data.created_by,
+      data.updated_by || null
     ]
   );
 
@@ -28,27 +43,38 @@ const createFeeStructure = async (
 };
 
 // Get All
-const getAllFeeStructures = async (
-  user
-) => {
+// Get All
+const getAllFeeStructures = async () => {
 
   const [rows] = await pool.query(`
     SELECT
       fs.id,
-      fs.school_class_id,
-      fs.fee_type,
-      fs.amount,
-      fs.status,
 
-      c.class_name
+      fs.school_id,
+      s.school_name,
+
+      fs.batch_id,
+      b.batch_code,
+
+      fs.academic_year_id,
+      ay.academic_year_name,
+
+      fs.total_amount,
+      fs.due_date,
+      fs.payment_type,
+      fs.number_of_installments,
+      fs.status
 
     FROM fee_structures fs
 
-    JOIN school_classes sc
-      ON sc.id = fs.school_class_id
+    LEFT JOIN school s
+      ON s.id = fs.school_id
 
-    JOIN classes c
-      ON c.id = sc.class_id
+    LEFT JOIN tbl_batches b
+      ON b.batch_id = fs.batch_id
+
+    LEFT JOIN academic_years ay
+      ON ay.id = fs.academic_year_id
 
     ORDER BY fs.id DESC
   `);
@@ -73,22 +99,39 @@ async (schoolClassId) => {
 };
 
 // Update
-const updateFeeStructure =
-async (id, data) => {
+const updateFeeStructure = async (id, data) => {
 
   const [result] = await pool.query(
     `
     UPDATE fee_structures
     SET
-      fee_type = ?,
-      amount = ?,
-      updated_by = ?,
-      updated_at = NOW()
-    WHERE id = ?
+      school_id=?,
+      batch_id=?,
+      academic_year_id=?,
+      total_amount=?,
+      due_date=?,
+      late_fee_rules=?,
+      payment_type=?,
+      number_of_installments=?,
+      status=?,
+      active_key=?,
+      updated_by=?,
+      updated_at=NOW()
+    WHERE id=?
     `,
     [
-      data.fee_type,
-      data.amount,
+      data.school_id,
+      data.batch_id,
+      data.academic_year_id,
+      data.total_amount,
+      data.due_date,
+      data.late_fee_rules
+        ? JSON.stringify(data.late_fee_rules)
+        : null,
+      data.payment_type,
+      data.number_of_installments,
+      data.status,
+      data.active_key,
       data.updated_by,
       id
     ]

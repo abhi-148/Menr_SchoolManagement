@@ -1,11 +1,12 @@
 const pool = require("../config/db");
 
+// ================= SUPER ADMIN =================
+
 const findSuperAdminByEmail = async (email) => {
   const [rows] = await pool.query(
     "SELECT * FROM super_admin WHERE email = ?",
     [email]
   );
-
   return rows[0];
 };
 
@@ -35,7 +36,6 @@ const loginSuperAdmin = async (email) => {
 };
 
 const findSuperAdminById = async (id) => {
-
   const [rows] = await pool.query(
     "SELECT * FROM super_admin WHERE id = ?",
     [id]
@@ -44,11 +44,7 @@ const findSuperAdminById = async (id) => {
   return rows[0];
 };
 
-const updateSuperAdminPassword = async (
-  id,
-  password
-) => {
-
+const updateSuperAdminPassword = async (id, password) => {
   const [result] = await pool.query(
     `UPDATE super_admin
      SET password = ?
@@ -64,7 +60,6 @@ const updateSuperAdminProfile = async (
   full_name,
   email
 ) => {
-
   const [result] = await pool.query(
     `UPDATE super_admin
      SET full_name = ?,
@@ -80,23 +75,16 @@ const updateSuperAdminProfile = async (
   return result;
 };
 
-/* ==========================
-   FORGOT PASSWORD FUNCTIONS
-========================== */
+// ================= PASSWORD RESET =================
 
 const saveResetToken = async (
   email,
   token,
   expiresAt
 ) => {
-
   const [result] = await pool.query(
     `INSERT INTO password_reset_tokens
-    (
-      email,
-      token,
-      expires_at
-    )
+    (email, token, expires_at)
     VALUES (?, ?, ?)`,
     [
       email,
@@ -108,10 +96,7 @@ const saveResetToken = async (
   return result;
 };
 
-const findResetToken = async (
-  token
-) => {
-
+const findResetToken = async (token) => {
   const [rows] = await pool.query(
     `SELECT *
      FROM password_reset_tokens
@@ -122,10 +107,7 @@ const findResetToken = async (
   return rows[0];
 };
 
-const deleteResetToken = async (
-  token
-) => {
-
+const deleteResetToken = async (token) => {
   const [result] = await pool.query(
     `DELETE
      FROM password_reset_tokens
@@ -136,17 +118,24 @@ const deleteResetToken = async (
   return result;
 };
 
-const findSchoolAdminByEmail = async (email) => {
+// ================= SCHOOL ADMIN =================
 
+const findSchoolAdminByEmail = async (email) => {
   const [rows] = await pool.query(
-    `SELECT *
-     FROM school
-     WHERE admin_email = ?`,
+    `
+    SELECT
+      s.id,
+      s.school_name,
+      s.admin_email,
+      s.admin_password
+    FROM school s
+    WHERE s.admin_email = ?
+    LIMIT 1
+    `,
     [email]
   );
 
   return rows[0];
-
 };
 
 module.exports = {
@@ -159,5 +148,5 @@ module.exports = {
   saveResetToken,
   findResetToken,
   deleteResetToken,
-   findSchoolAdminByEmail,
+  findSchoolAdminByEmail
 };

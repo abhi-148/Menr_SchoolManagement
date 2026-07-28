@@ -298,21 +298,19 @@ function AddAdmissionInquiry({
               Select Status
             </option>
 
-            <option value="NEW">
-              NEW
-            </option>
+          <option value="New">New</option>
 
-            <option value="FOLLOW_UP">
-              FOLLOW UP
-            </option>
+<option value="Follow Up">
+  Follow Up
+</option>
 
-            <option value="ADMISSION_DONE">
-              ADMISSION DONE
-            </option>
+<option value="Admission Done">
+  Admission Done
+</option>
 
-            <option value="REJECTED">
-              REJECTED
-            </option>
+<option value="Rejected">
+  Rejected
+</option>
           </select>
         </div>
 

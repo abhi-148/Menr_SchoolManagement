@@ -10,8 +10,12 @@ const {
 } = require("../services/admissionInquiryService");
 
 // Create
+// Create
 const createAdmissionInquiry = async (req, res) => {
   try {
+
+    console.log("Request Body:", req.body);
+
     const result = await createAdmissionInquiryService({
       ...req.body,
       created_by: req.user.id
@@ -24,13 +28,22 @@ const createAdmissionInquiry = async (req, res) => {
     });
 
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
-};
 
+  console.error("========== Admission Inquiry Error ==========");
+  console.error(error);
+
+  console.error("Code:", error.code);
+  console.error("SQL Message:", error.sqlMessage);
+  console.error("SQL State:", error.sqlState);
+  console.error("SQL:", error.sql);
+
+  return res.status(500).json({
+    success: false,
+    message: error.sqlMessage || error.message
+  });
+
+}
+};
 // Get All
 const getAllAdmissionInquiries = async (req, res) => {
   try {
@@ -124,11 +137,14 @@ const searchAdmissionInquiry = async (req, res) => {
     });
 
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
+  console.error("Admission Inquiry Error:", error);
+
+  return res.status(500).json({
+    success: false,
+    message: error.message,
+    stack: error.stack
+  });
+}
 };
 
 // Filter By Status

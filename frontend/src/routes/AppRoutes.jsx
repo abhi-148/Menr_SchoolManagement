@@ -21,6 +21,10 @@ import Profile from "../pages/Profile/Profile";
 import AIAssistant from "../pages/AI/AIAssistant";
 import FeeStructure from "../pages/FeeStructure/FeeStructure";
 import StudentFeeCollection from "../pages/StudentFeeCollection/StudentFeeCollection";
+import FeeStructureComponents from "../pages/FeeStructureComponents/FeeStructureComponents";
+import FeeInstallments from "../pages/FeeInstallments/FeeInstallments";
+import FeeDiscounts from "../pages/FeeDiscounts/FeeDiscounts";
+import FeeConcessions from "../pages/FeeConcessions/FeeConcessions";
 import Exams from "../pages/Exams/Exams";
 import StudentMarks from "../pages/StudentMarks/StudentMarks";
 import Timetable from "../pages/Timetable/Timetable";
@@ -257,6 +261,34 @@ function AppRoutes() {
       <FeeStructure />
     </PrivateRoute>
   }
+/>
+
+<Route
+  path="/fee-structure-components"
+  element={
+    <PrivateRoute>
+      <FeeStructureComponents />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/fee-installments"
+  element={
+    <PrivateRoute>
+      <FeeInstallments />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/fee-discounts"
+  element={<FeeDiscounts />}
+/>
+
+<Route
+  path="/fee-concessions"
+  element={<FeeConcessions />}
 />
 
 <Route

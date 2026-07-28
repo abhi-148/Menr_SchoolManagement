@@ -55,13 +55,13 @@ function FeeStructure() {
       feeStructures.filter(
         (item) =>
 
-          item.fee_type
+         item.batch_code
             ?.toLowerCase()
             .includes(
               search.toLowerCase()
             ) ||
 
-          item.class_name
+       item.school_name
             ?.toLowerCase()
             .includes(
               search.toLowerCase()
@@ -77,29 +77,22 @@ function FeeStructure() {
     feeStructures
   ]);
 
-  const fetchData =
-  async () => {
+  const fetchData = async () => {
+  try {
+    const response = await getFeeStructures();
 
-    try {
+    console.log("API Response =>", response);
+    console.log("Data =>", response.data);
 
-      const response =
-        await getFeeStructures();
+    setFeeStructures(response.data || []);
+    setFilteredData(response.data || []);
 
-      setFeeStructures(
-        response.data || []
-      );
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-      setFilteredData(
-        response.data || []
-      );
-
-    } catch (error) {
-
-      console.log(error);
-
-    }
-
-  };
+  
 
   const handleAdd =
   async (data) => {
@@ -208,7 +201,7 @@ function FeeStructure() {
       ) =>
         sum +
         Number(
-          item.amount || 0
+        item.total_amount || 0
         ),
       0
     );
@@ -263,7 +256,7 @@ function FeeStructure() {
           <div className="bg-yellow-100 p-4 rounded-lg">
 
             <h3>
-              Fee Types
+            Payment Types
             </h3>
 
             <p className="text-2xl font-bold">
@@ -271,7 +264,7 @@ function FeeStructure() {
                 new Set(
                   feeStructures.map(
                     (item) =>
-                      item.fee_type
+                      item.payment_type
                   )
                 ).size
               }
@@ -287,7 +280,7 @@ function FeeStructure() {
 
           <input
             type="text"
-            placeholder="Search Fee Type or Class..."
+            placeholder="Search School, Batch or Academic Year..."
             value={search}
             onChange={(e) =>
               setSearch(
@@ -314,19 +307,19 @@ function FeeStructure() {
                 </th>
 
                 <th className="p-4">
-                  Class ID
+                 School
                 </th>
 
                 <th className="p-4">
-                  Class Name
+                 Batch
                 </th>
 
                 <th className="p-4">
-                  Fee Type
+                 Academic Year 
                 </th>
 
                 <th className="p-4">
-                  Amount
+                 Total Amount
                 </th>
 
                 <th className="p-4">
@@ -357,24 +350,30 @@ function FeeStructure() {
 
                         <td className="p-4">
                           {
-                            item.school_class_id
+                            item.school_name
                           }
                         </td>
 
                         <td className="p-4">
                           {
-                            item.class_name
+                            item.batch_code
                           }
                         </td>
 
                         <td className="p-4">
                           {
-                            item.fee_type
+                           item.academic_year_name
                           }
                         </td>
 
                         <td className="p-4">
-                          ₹{item.amount}
+{item.due_date}
+</td>
+
+<td className="p-4">
+{item.payment_type}
+</td><td className="p-4">
+                          ₹{item.total_amount}
                         </td>
 
                         <td className="p-4">
@@ -417,7 +416,7 @@ function FeeStructure() {
                   <tr>
 
                     <td
-                      colSpan="6"
+                      colSpan="8"
                       className="text-center p-5"
                     >
                       No Data Found

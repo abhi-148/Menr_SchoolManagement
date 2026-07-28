@@ -6,29 +6,36 @@ function AddFeeStructure({
   editData,
   isEditing
 }) {
+const [formData, setFormData] = useState({
+  school_id: "",
+  batch_id: "",
+  academic_year_id: "",
+  total_amount: "",
+  due_date: "",
+  payment_type: "FULL",
+  number_of_installments: "",
+  status: "active"
+});
 
-  const [formData, setFormData] = useState({
-    school_class_id: "",
-    fee_type: "",
-    amount: ""
-  });
+useEffect(() => {
 
-  useEffect(() => {
+  if (editData) {
 
-    if (editData) {
+    setFormData({
+      school_id: editData.school_id || "",
+      batch_id: editData.batch_id || "",
+      academic_year_id: editData.academic_year_id || "",
+      total_amount: editData.total_amount || "",
+      due_date: editData.due_date || "",
+      payment_type: editData.payment_type || "FULL",
+      number_of_installments:
+        editData.number_of_installments || "",
+      status: editData.status || "active"
+    });
 
-      setFormData({
-        school_class_id:
-          editData.school_class_id || "",
-        fee_type:
-          editData.fee_type || "",
-        amount:
-          editData.amount || ""
-      });
+  }
 
-    }
-
-  }, [editData]);
+}, [editData]);
 
   const handleChange = (e) => {
 
@@ -58,10 +65,15 @@ function AddFeeStructure({
     }
 
     setFormData({
-      school_class_id: "",
-      fee_type: "",
-      amount: ""
-    });
+  school_id: "",
+  batch_id: "",
+  academic_year_id: "",
+  total_amount: "",
+  due_date: "",
+  payment_type: "FULL",
+  number_of_installments: "",
+  status: "active"
+});
 
   };
 
@@ -82,34 +94,81 @@ function AddFeeStructure({
 
       <div className="grid md:grid-cols-3 gap-4">
 
-        <input
-          type="number"
-          name="school_class_id"
-          placeholder="School Class ID"
-          value={formData.school_class_id}
-          onChange={handleChange}
-          className="border p-3 rounded-lg"
-        />
+  <input
+    type="number"
+    name="school_id"
+    placeholder="School ID"
+    value={formData.school_id}
+    onChange={handleChange}
+    className="border p-3 rounded-lg"
+  />
 
-        <input
-          type="text"
-          name="fee_type"
-          placeholder="Fee Type"
-          value={formData.fee_type}
-          onChange={handleChange}
-          className="border p-3 rounded-lg"
-        />
+  <input
+    type="number"
+    name="batch_id"
+    placeholder="Batch ID"
+    value={formData.batch_id}
+    onChange={handleChange}
+    className="border p-3 rounded-lg"
+  />
 
-        <input
-          type="number"
-          name="amount"
-          placeholder="Amount"
-          value={formData.amount}
-          onChange={handleChange}
-          className="border p-3 rounded-lg"
-        />
+  <input
+    type="number"
+    name="academic_year_id"
+    placeholder="Academic Year ID"
+    value={formData.academic_year_id}
+    onChange={handleChange}
+    className="border p-3 rounded-lg"
+  />
 
-      </div>
+  <input
+    type="number"
+    name="total_amount"
+    placeholder="Total Amount"
+    value={formData.total_amount}
+    onChange={handleChange}
+    className="border p-3 rounded-lg"
+  />
+
+  <input
+    type="date"
+    name="due_date"
+    value={formData.due_date}
+    onChange={handleChange}
+    className="border p-3 rounded-lg"
+  />
+
+  <select
+    name="payment_type"
+    value={formData.payment_type}
+    onChange={handleChange}
+    className="border p-3 rounded-lg"
+  >
+    <option value="FULL">Full</option>
+    <option value="SEMESTER">Semester</option>
+    <option value="INSTALLMENT">Installment</option>
+  </select>
+
+  <input
+    type="number"
+    name="number_of_installments"
+    placeholder="No. of Installments"
+    value={formData.number_of_installments}
+    onChange={handleChange}
+    className="border p-3 rounded-lg"
+  />
+
+  <select
+    name="status"
+    value={formData.status}
+    onChange={handleChange}
+    className="border p-3 rounded-lg"
+  >
+    <option value="active">Active</option>
+    <option value="inactive">Inactive</option>
+  </select>
+
+</div>
 
       <button
         type="submit"

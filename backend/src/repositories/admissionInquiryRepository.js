@@ -2,7 +2,12 @@ const pool = require("../config/db");
 
 // Create
 const createAdmissionInquiry = async (data) => {
+
+  console.log("Insert Data:", data);
+
   const [result] = await pool.query(
+
+    
     `
     INSERT INTO admission_inquiries (
       school_id,
@@ -101,7 +106,7 @@ const getAllAdmissionInquiries = async () => {
       ON ai.academic_year_id = ay.id
     LEFT JOIN classes c
       ON ai.program_class_id = c.id
-    LEFT JOIN school_mediums sm
+   LEFT JOIN tbl_school_mediums sm
       ON ai.school_medium_id = sm.id
     LEFT JOIN staff st
       ON ai.assigned_staff_id = st.id
@@ -150,7 +155,7 @@ const getAdmissionInquiryById = async (id) => {
       ON ai.academic_year_id = ay.id
     LEFT JOIN classes c
       ON ai.program_class_id = c.id
-    LEFT JOIN school_mediums sm
+    LEFT JOIN tbl_school_mediums sm
       ON ai.school_medium_id = sm.id
     LEFT JOIN staff st
       ON ai.assigned_staff_id = st.id

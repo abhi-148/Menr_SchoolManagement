@@ -8,17 +8,29 @@ const {
 
 // Create
 const createFeeStructure = async (req, res) => {
-
-  console.log("BODY => ", req.body);
-
   try {
 
-   await createFeeStructureService({
-  ...req.body,
-  created_by: req.user.id,
-  created_by_role: req.user.role,
-  schoolId: req.user.schoolId
-});
+    console.log("BODY =>", req.body);
+    console.log("USER =>", req.user);
+
+    const schoolId =
+      req.user.schoolId ||
+      req.user.school_id ||
+      req.body.school_id;
+
+    if (!schoolId) {
+      return res.status(400).json({
+        success: false,
+        message: "School ID not found."
+      });
+    }
+
+    const result = await createFeeStructureService({
+      ...req.body,
+      school_id: schoolId,
+      created_by: req.user.id,
+      created_by_role: req.user.role
+    });
 
     return res.status(201).json({
       success: true,
@@ -27,10 +39,16 @@ const createFeeStructure = async (req, res) => {
 
   } catch (error) {
 
-    console.error(
-      "Fee Structure Error =>",
-      error
-    );
+    console.error("Fee Structure Error =>", error);
+    console.log("Resolved School ID =>", schoolId);
+console.log("Request Body =>", req.body);
+
+console.log({
+  ...req.body,
+  school_id: schoolId,
+  created_by: req.user.id,
+  created_by_role: req.user.role
+});
 
     return res.status(500).json({
       success: false,
@@ -39,7 +57,6 @@ const createFeeStructure = async (req, res) => {
     });
 
   }
-
 };
 
 // Get All
@@ -48,9 +65,7 @@ const getAllFeeStructures = async (req, res) => {
   try {
 
  const data =
-await getAllFeeStructuresService(
-  req.user
-);
+await getAllFeeStructuresService();
 
     return res.status(200).json({
       success: true,

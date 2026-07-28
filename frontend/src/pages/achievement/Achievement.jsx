@@ -54,12 +54,13 @@ function Achievement() {
 
     try {
 
-      const response =
-        await getAchievements();
+      const response = await getAchievements();
 
-      setAchievements(
-        response.data || []
-      );
+console.log("Achievement Response:", response.data);
+
+setAchievements(
+  response.data.data || []
+);
 
     } catch (error) {
 
@@ -83,14 +84,11 @@ function Achievement() {
 
       }
 
-      const response =
-        await searchAchievement(
-          keyword
-        );
+     const response = await searchAchievement(keyword);
 
-      setAchievements(
-        response.data || []
-      );
+setAchievements(
+  response.data.data || []
+);
 
     } catch (error) {
 
