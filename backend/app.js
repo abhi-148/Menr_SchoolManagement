@@ -96,6 +96,11 @@ const studentFeeRoutes = require(
   "./src/routes/studentFeeRoutes"
 );
 
+const eventRoutes = require("./src/routes/eventRoutes");
+const eventRegistrationRoutes = require(
+  "./src/routes/eventRegistrationRoutes"
+);
+
 const libraryFinePaymentRoutes = require(
 "./src/routes/libraryFinePaymentRoutes"
 );
@@ -178,8 +183,12 @@ const achievementRoutes = require(
   "./src/routes/achievementRoutes"
 );
 
-const admissionFollowUpRoutes = require("./src/routes/admissionFollowUpRoutes");
+const eventPaymentRoutes = require(
+  "./src/routes/eventPaymentRoutes"
+);
 
+const admissionFollowUpRoutes = require("./src/routes/admissionFollowUpRoutes");
+const branchRoutes = require("./src/routes/branchRoutes");
 
 // Health Check
 app.get("/", (req, res) => {
@@ -307,6 +316,17 @@ app.use(
   examTimetableRoutes
 );
 
+app.use("/api/events", eventRoutes);
+
+app.use(
+  "/api/event-registrations",
+  eventRegistrationRoutes
+);
+app.use(
+  "/api/event-payments",
+  eventPaymentRoutes
+);
+
 app.use(
   "/api/report-cards",
   reportCardRoutes
@@ -364,6 +384,8 @@ app.use(
   dashboardRoutes
 );
 
+
+app.use("/api/branches", branchRoutes);
 
 // Profile
 app.use(

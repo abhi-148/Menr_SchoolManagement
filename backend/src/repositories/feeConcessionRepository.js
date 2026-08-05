@@ -46,7 +46,7 @@ const getAllFeeConcessions = async () => {
 
       fc.*,
 
-      st.student_name,
+      st.full_name AS student_name,
 
       fs.total_amount
 

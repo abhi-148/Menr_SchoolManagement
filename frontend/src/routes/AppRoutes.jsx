@@ -67,6 +67,10 @@ import AcademicYears from "../pages/academicYears/AcademicYears";
 import AdmissionInquiry from "../pages/admissionInquiry/AdmissionInquiry";
 import AdmissionFollowUp from "../pages/admissionFollowUp/AdmissionFollowUp";
 import Achievement from "../pages/achievement/Achievement";
+import Events from "../pages/events/Events";
+import EventRegistrations from "../pages/EventRegistration/EventRegistrations";
+import EventPayments from "../pages/EventPayments/EventPayments";
+import Branches from "../pages/branches/Branches";
 
 import PrivateRoute from "./PrivateRoute";
 
@@ -607,6 +611,42 @@ function AppRoutes() {
   element={
     <PrivateRoute>
       <Achievement />
+    </PrivateRoute>
+  }
+/>
+<Route
+  path="/events"
+  element={
+    <PrivateRoute>
+      <Events />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/event-registrations"
+  element={
+    <PrivateRoute>
+      <EventRegistrations />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/event-payments"
+  element={
+    <PrivateRoute>
+      <EventPayments />
+    </PrivateRoute>
+  }
+/>
+
+
+<Route
+  path="/branches"
+  element={
+    <PrivateRoute>
+      <Branches />
     </PrivateRoute>
   }
 />

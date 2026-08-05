@@ -27,7 +27,8 @@ GraduationCap,
 Library,
 Wallet,
 BadgePercent,
-Settings
+Settings,
+CalendarHeart
 } from "lucide-react";
 
 import {
@@ -518,6 +519,70 @@ const subLinkClass = (path) =>
     </Link>
   </li>
 </>
+
+)}
+
+{(role === "SUPER_ADMIN" ||
+  role === "SCHOOL_ADMIN") && (
+
+<li>
+  <Link
+    to="/events"
+    className={linkClass("/events")}
+    onClick={() => setIsOpen(false)}
+  >
+    <CalendarDays size={20} />
+    Event Management
+  </Link>
+</li>
+
+)}
+
+{(role === "SUPER_ADMIN" ||
+  role === "SCHOOL_ADMIN") && (
+
+<li>
+  <Link
+    to="/event-registrations"
+    className={linkClass("/event-registrations")}
+    onClick={() => setIsOpen(false)}
+  >
+    <CalendarHeart size={20} />
+    Event Registrations
+  </Link>
+</li>
+
+)}
+
+{(role === "SUPER_ADMIN" ||
+  role === "SCHOOL_ADMIN") && (
+
+<li>
+  <Link
+    to="/event-payments"
+    className={linkClass("/event-payments")}
+    onClick={() => setIsOpen(false)}
+  >
+    <CreditCard size={20} />
+    Event Payments
+  </Link>
+</li>
+
+)}
+
+{(role === "SUPER_ADMIN" ||
+  role === "SCHOOL_ADMIN") && (
+
+<li>
+  <Link
+    to="/branches"
+    className={linkClass("/branches")}
+    onClick={() => setIsOpen(false)}
+  >
+    <Building2 size={20} />
+    Branch Master
+  </Link>
+</li>
 
 )}
 

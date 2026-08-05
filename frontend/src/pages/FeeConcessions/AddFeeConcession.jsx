@@ -136,14 +136,14 @@ const AddFeeConcession = ({
               Select Student
             </option>
 
-            {students.map((student) => (
-              <option
-                key={student.id}
-                value={student.id}
-              >
-                {student.student_name}
-              </option>
-            ))}
+           {students.map((student) => (
+  <option
+    key={student.id}
+    value={student.id}
+  >
+    {student.full_name}
+  </option>
+))}
 
           </select>
 
