@@ -20,6 +20,19 @@ A full-stack School Management System built using the MERN Stack (MongoDB, Expre
 * View All Schools
 * School Admin Creation
 
+* ## Latest Update (August 2026)
+
+### Event Module
+- Event CRUD
+- Event Registration Module
+- Event Payment Module
+- Registration Validation
+- Duplicate Registration Check
+- Duplicate Transaction Validation
+- Dashboard Cards
+- Search Functionality
+- Event Payment Management
+
 ### 👨‍🏫 Staff Management
 
 * Add Staff
