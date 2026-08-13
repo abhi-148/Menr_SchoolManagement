@@ -193,6 +193,17 @@ const academicYearSessionRoutes = require(
   "./src/routes/academicYearSessionRoutes"
 );
 
+const staffScheduleRoutes = require(
+  "./src/routes/staffScheduleRoutes"
+);
+const staffAttendanceRoutes = require(
+  "./src/routes/staffAttendanceRoutes"
+);
+
+const leaveRequestRoutes = require(
+  "./src/routes/leaveRequestRoutes"
+);
+
 // Health Check
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -245,6 +256,21 @@ app.use(
 app.use(
   "/api/staff-departments",
   staffDepartmentRoutes
+);
+
+app.use(
+  "/api/staff-schedules",
+  staffScheduleRoutes
+);
+
+app.use(
+  "/api/staff-attendance",
+  staffAttendanceRoutes
+);
+
+app.use(
+  "/api/leave-requests",
+  leaveRequestRoutes
 );
 
 // Students
