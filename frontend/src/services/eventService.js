@@ -17,14 +17,36 @@ export const getEvents = async (
 };
 // Create Event
 export const createEvent = async (data) => {
-  const response = await api.post("/events", data);
+
+  const response = await api.post(
+    "/events",
+    data,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
   return response.data;
+
 };
 
 // Update Event
 export const updateEvent = async (id, data) => {
-  const response = await api.put(`/events/${id}`, data);
+
+  const response = await api.put(
+    `/events/${id}`,
+    data,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
+  );
+
   return response.data;
+
 };
 
 // Delete Event

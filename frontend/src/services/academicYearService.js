@@ -1,146 +1,69 @@
 import api from "./api";
 
-// ==============================
+// ==========================================
 // Get All Academic Years
-// ==============================
-
+// ==========================================
 export const getAcademicYears = async () => {
-
-  const response = await api.get(
-    "/academic-years"
-  );
-
+  const response = await api.get("/academic-years");
   return response.data;
-
 };
 
-// ==============================
-// Get Academic Year By Id
-// ==============================
-
-export const getAcademicYearById = async (
-  id
-) => {
-
+// ==========================================
+// Get Academic Year By ID
+// ==========================================
+export const getAcademicYearById = async (id) => {
   const response = await api.get(
     `/academic-years/${id}`
   );
 
   return response.data;
-
 };
 
-// ==============================
+// ==========================================
 // Create Academic Year
-// ==============================
-
-export const createAcademicYear = async (
-  data
-) => {
-
+// ==========================================
+export const createAcademicYear = async (data) => {
   const response = await api.post(
     "/academic-years",
     data
   );
 
   return response.data;
-
 };
 
-// ==============================
+// ==========================================
 // Update Academic Year
-// ==============================
-
+// ==========================================
 export const updateAcademicYear = async (
   id,
   data
 ) => {
-
   const response = await api.put(
     `/academic-years/${id}`,
     data
   );
 
   return response.data;
-
 };
 
-// ==============================
+// ==========================================
 // Delete Academic Year
-// ==============================
-
-export const deleteAcademicYear = async (
-  id
-) => {
-
+// ==========================================
+export const deleteAcademicYear = async (id) => {
   const response = await api.delete(
     `/academic-years/${id}`
   );
 
   return response.data;
-
 };
 
 // ==============================
 // Search Academic Years
 // ==============================
-
-export const searchAcademicYears = async (
-  keyword
-) => {
-
+export const searchAcademicYears = async (keyword) => {
   const response = await api.get(
-    `/academic-years/search?keyword=${keyword}`
+    `/academic-years/search?keyword=${encodeURIComponent(keyword)}`
   );
 
   return response.data;
-
-};
-
-// ==============================
-// Get Current Academic Year
-// ==============================
-
-export const getCurrentAcademicYear = async () => {
-
-  const response = await api.get(
-    "/academic-years/current"
-  );
-
-  return response.data;
-
-};
-
-// ==============================
-// Get Active Academic Years
-// ==============================
-
-export const getActiveAcademicYears = async () => {
-
-  const response = await api.get(
-    "/academic-years/status/ACTIVE"
-  );
-
-  return response.data;
-
-};
-
-// ==============================
-// Update Academic Year Status
-// ==============================
-
-export const updateAcademicYearStatus = async (
-  id,
-  status
-) => {
-
-  const response = await api.patch(
-    `/academic-years/${id}/status`,
-    {
-      status
-    }
-  );
-
-  return response.data;
-
 };

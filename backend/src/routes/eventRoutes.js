@@ -1,7 +1,9 @@
 const express = require("express");
 const router = express.Router();
 
+
 const authMiddleware = require("../middlewares/authMiddleware");
+const uploadEventImage = require("../middlewares/uploadEventImage");
 
 const {
   createEvent,
@@ -16,18 +18,40 @@ const {
 // =======================================
 
 // Create Event
-router.post("/", authMiddleware, createEvent);
+router.post(
+  "/",
+  authMiddleware,
+  uploadEventImage.single("cover_image"),
+  createEvent
+);
 
 // Get All Events
-router.get("/", authMiddleware, getAllEvents);
+router.get(
+  "/",
+  authMiddleware,
+  getAllEvents
+);
 
 // Get Single Event
-router.get("/:id", authMiddleware, getEventById);
+router.get(
+  "/:id",
+  authMiddleware,
+  getEventById
+);
 
 // Update Event
-router.put("/:id", authMiddleware, updateEvent);
+router.put(
+  "/:id",
+  authMiddleware,
+  uploadEventImage.single("cover_image"),
+  updateEvent
+);
 
 // Delete Event
-router.delete("/:id", authMiddleware, deleteEvent);
+router.delete(
+  "/:id",
+  authMiddleware,
+  deleteEvent
+);
 
 module.exports = router;

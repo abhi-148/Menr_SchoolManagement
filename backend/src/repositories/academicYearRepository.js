@@ -1,23 +1,24 @@
 const pool = require("../config/db");
 
 // Create
+// ===============================
+// Create Academic Year
+// ===============================
 const createAcademicYear = async (data) => {
-
   const [result] = await pool.query(
     `
-    INSERT INTO academic_years
-(
-school_id,
-branch_id,
-academic_year_name,
-semester,
-start_date,
-end_date,
-is_current,
-status,
-created_by
-)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO academic_years (
+      school_id,
+      branch_id,
+      academic_year_name,
+      semester,
+      start_date,
+      end_date,
+      is_current,
+      status,
+      created_by
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       data.school_id,
@@ -26,8 +27,9 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       data.semester,
       data.start_date,
       data.end_date,
+      data.is_current,
       data.status,
-      data.created_by
+      data.created_by,
     ]
   );
 

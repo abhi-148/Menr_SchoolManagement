@@ -105,7 +105,7 @@ const createEvent = async (data) => {
       data.is_multiple_day,
       data.total_duration_hours,
 
-      data.event_schedule,
+      JSON.stringify(data.event_schedule || []),
 
       data.audience_type,
       data.target_batch_ids,
@@ -254,6 +254,7 @@ const updateEvent = async (id, data) => {
         is_single_day=?,
         is_multiple_day=?,
         total_duration_hours=?,
+        event_schedule=?,
 
         audience_type=?,
 
@@ -268,6 +269,7 @@ const updateEvent = async (id, data) => {
         is_holiday=?,
 
         affects_timetable=?,
+        cover_image=?,
 
         requires_registration=?,
 
@@ -302,6 +304,7 @@ const updateEvent = async (id, data) => {
       data.is_single_day,
       data.is_multiple_day,
       data.total_duration_hours,
+      JSON.stringify(data.event_schedule || []),
 
       data.audience_type,
 
@@ -316,6 +319,7 @@ const updateEvent = async (id, data) => {
       data.is_holiday,
 
       data.affects_timetable,
+      data.cover_image,
 
       data.requires_registration,
 
@@ -392,7 +396,25 @@ const getEventRegistrationSummary = async (eventId) => {
     [eventId]
   );
 
-  return rows[0];
+ const event = rows[0];
+
+if (event?.event_schedule) {
+
+  try {
+
+    event.event_schedule = JSON.parse(
+      event.event_schedule
+    );
+
+  } catch {
+
+    event.event_schedule = [];
+
+  }
+
+}
+
+return event;
 
 };
 
@@ -471,29 +493,49 @@ const updateEventRegistrationCounts = async (
 // ==============================
 const checkDuplicateEvent = async (
   schoolId,
-  branchId,
+  schoolBranchId,
   eventName,
-  eventDate
-) => {
+  startDate
+)=> {
 
   const [rows] = await pool.query(
     `
-    SELECT id
-  FROM tbl_events
+    SELECT event_id
+FROM tbl_events
     WHERE school_id = ?
-      AND branch_id = ?
+      AND school_branch_id = ?
       AND event_name = ?
-      AND event_date = ?
+      AND start_date = ?
     `,
     [
       schoolId,
-      branchId,
+      schoolBranchId,
       eventName,
-      eventDate,
+      startDate,
     ]
   );
 
-  return rows;
+rows.forEach((item) => {
+
+  if (item.event_schedule) {
+
+    try {
+
+      item.event_schedule = JSON.parse(
+        item.event_schedule
+      );
+
+    } catch {
+
+      item.event_schedule = [];
+
+    }
+
+  }
+
+});
+
+return rows;
 
 };
 
@@ -510,13 +552,13 @@ const checkDuplicateEventForUpdate = async (
 
   const [rows] = await pool.query(
     `
-    SELECT id
-   FROM tbl_events
-    WHERE school_id = ?
-      AND branch_id = ?
-      AND event_name = ?
-      AND event_date = ?
-      AND id <> ?
+  SELECT event_id
+FROM tbl_events
+WHERE school_id = ?
+AND school_branch_id = ?
+AND event_name = ?
+AND start_date = ?
+AND event_id <> ?
     `,
     [
       schoolId,

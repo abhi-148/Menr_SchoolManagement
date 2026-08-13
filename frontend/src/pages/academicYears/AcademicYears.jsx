@@ -370,23 +370,15 @@ function AcademicYears() {
 
                       <td className="p-4">
 
-                        {academicYear.status === "ACTIVE" ? (
-
-                          <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
-
-                            ACTIVE
-
-                          </span>
-
-                        ) : (
-
-                          <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
-
-                            INACTIVE
-
-                          </span>
-
-                        )}
+                       {String(academicYear.status).toUpperCase() === "ACTIVE" ? (
+  <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm">
+    ACTIVE
+  </span>
+) : (
+  <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm">
+    INACTIVE
+  </span>
+)}
 
                       </td>
 

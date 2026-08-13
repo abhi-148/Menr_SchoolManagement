@@ -7,6 +7,7 @@ const {
   checkDuplicateEvent,
   checkDuplicateEventForUpdate,
 } = require("../repositories/eventRepository");
+
 // ===============================
 // Helper - Calculate Duration
 // ===============================
@@ -17,14 +18,25 @@ const calculateDurationHours = (
   endTime
 ) => {
   try {
-    const start = new Date(`${startDate}T${startTime || "00:00:00"}`);
-    const end = new Date(`${endDate}T${endTime || "00:00:00"}`);
+    const start = new Date(
+      `${startDate}T${startTime || "00:00:00"}`
+    );
 
-    const diff = (end - start) / (1000 * 60 * 60);
+    const end = new Date(
+      `${endDate}T${endTime || "00:00:00"}`
+    );
 
-    return diff > 0 ? Number(diff.toFixed(2)) : 0;
+    const diff =
+      (end - start) / (1000 * 60 * 60);
+
+    return diff > 0
+      ? Number(diff.toFixed(2))
+      : 0;
+
   } catch {
+
     return 0;
+
   }
 };
 
@@ -32,8 +44,15 @@ const calculateDurationHours = (
 // Create Event
 // ===============================
 const createEventService = async (data) => {
-  // Required validations
-  if (!data.school_id) throw new Error("School is required.");
+
+  console.log("========== EVENT CREATE ==========");
+  console.log(data);
+  console.log("==================================");
+
+  // Required Validation
+
+  if (!data.school_id)
+    throw new Error("School is required.");
 
   if (!data.academic_year_id)
     throw new Error("Academic Year is required.");
@@ -53,78 +72,106 @@ const createEventService = async (data) => {
   if (!data.end_date)
     throw new Error("End Date is required.");
 
-  // Date validation
-  if (new Date(data.end_date) < new Date(data.start_date)) {
-    throw new Error("End Date cannot be before Start Date.");
+  // Date Validation
+
+  if (
+    new Date(data.end_date) <
+    new Date(data.start_date)
+  ) {
+    throw new Error(
+      "End Date cannot be before Start Date."
+    );
   }
 
   // Time Validation
-if (
-  data.start_date === data.end_date &&
-  data.start_time &&
-  data.end_time &&
-  data.end_time <= data.start_time
-) {
-  throw new Error(
-    "End Time must be greater than Start Time."
-  );
-}
 
-  // Duplicate Event Validation
-const duplicateEvent = await checkDuplicateEvent(
-  data.school_id,
-  data.school_branch_id,
-  data.event_name,
-  data.start_date
-);
+  if (
+    data.start_date === data.end_date &&
+    data.start_time &&
+    data.end_time &&
+    data.end_time <= data.start_time
+  ) {
+    throw new Error(
+      "End Time must be greater than Start Time."
+    );
+  }
 
-if (duplicateEvent.length > 0) {
-  throw new Error(
-    "An event with the same name already exists on this date."
-  );
-}
+  // Duplicate Validation
 
-  // Single / Multiple day
-  data.is_single_day = data.start_date === data.end_date;
-  data.is_multiple_day = !data.is_single_day;
+  const duplicateEvent =
+    await checkDuplicateEvent(
+      data.school_id,
+      data.school_branch_id,
+      data.event_name,
+      data.start_date
+    );
+
+  if (duplicateEvent.length > 0) {
+
+    throw new Error(
+      "An event with the same name already exists on this date."
+    );
+
+  }
+
+  // Single / Multiple Day
+
+  data.is_single_day =
+    data.start_date === data.end_date;
+
+  data.is_multiple_day =
+    !data.is_single_day;
 
   // Duration
-  data.total_duration_hours = calculateDurationHours(
-    data.start_date,
-    data.end_date,
-    data.start_time,
-    data.end_time
-  );
 
-  // Registration defaults
+  data.total_duration_hours =
+    calculateDurationHours(
+      data.start_date,
+      data.end_date,
+      data.start_time,
+      data.end_time
+    );
+
+  // Registration Defaults
+
   data.current_registrations = 0;
   data.current_students = 0;
   data.current_staff = 0;
   data.current_parents = 0;
 
-  data.available_spots = data.max_participants || 0;
+  data.available_spots =
+    Number(data.max_participants) || 0;
 
   data.is_registration_full = false;
 
-  if (!data.registration_status)
-    data.registration_status = "OPEN";
+  data.registration_status =
+    data.registration_status || "OPEN";
 
-  // Default values
-  data.event_status = data.event_status || "DRAFT";
-  data.priority = data.priority || "MEDIUM";
-  data.status = data.status || "ACTIVE";
+  // Default Values
+
+  data.event_status =
+    data.event_status || "DRAFT";
+
+  data.priority =
+    data.priority || "MEDIUM";
+
+  data.status =
+    data.status || "ACTIVE";
 
   data.expected_participants =
     Number(data.expected_participants) || 0;
 
-  data.budget = Number(data.budget) || 0;
+  data.budget =
+    Number(data.budget) || 0;
+
+  console.log("========== FINAL DATA ==========");
+  console.log(data);
+  console.log("================================");
 
   return await createEvent(data);
+
 };
 
-// ===============================
-// Get All Events
-// ===============================
 // ===============================
 // Get All Events
 // ===============================
@@ -141,32 +188,49 @@ const getAllEventsService = async (
   );
 
 };
+
 // ===============================
 // Get Event By ID
 // ===============================
-const getEventByIdService = async (id) => {
-  const event = await getEventById(id);
+const getEventByIdService = async (
+  id
+) => {
+
+  const event =
+    await getEventById(id);
 
   if (!event) {
-    throw new Error("Event not found.");
+
+    throw new Error(
+      "Event not found."
+    );
+
   }
 
   return event;
+
 };
 
 // ===============================
 // Update Event
 // ===============================
-const updateEventService = async (id, data) => {
+const updateEventService = async (
+  id,
+  data
+) => {
 
-  const existing = await getEventById(id);
+  const existing =
+    await getEventById(id);
 
   if (!existing) {
-    throw new Error("Event not found.");
+
+    throw new Error(
+      "Event not found."
+    );
+
   }
 
-  // Duplicate Validation
-  const duplicateEvent =
+  const duplicate =
     await checkDuplicateEventForUpdate(
       id,
       existing.school_id,
@@ -175,27 +239,36 @@ const updateEventService = async (id, data) => {
       data.start_date
     );
 
-  if (duplicateEvent.length > 0) {
+  if (duplicate.length > 0) {
+
     throw new Error(
-      "Another event with the same name already exists on this date."
+      "Another event with the same name already exists."
     );
+
   }
 
-  // Date Validation
-  if (new Date(data.end_date) < new Date(data.start_date)) {
-    throw new Error("End Date cannot be before Start Date.");
+  if (
+    new Date(data.end_date) <
+    new Date(data.start_date)
+  ) {
+
+    throw new Error(
+      "End Date cannot be before Start Date."
+    );
+
   }
 
-  // Time Validation
   if (
     data.start_date === data.end_date &&
     data.start_time &&
     data.end_time &&
     data.end_time <= data.start_time
   ) {
+
     throw new Error(
       "End Time must be greater than Start Time."
     );
+
   }
 
   data.is_single_day =
@@ -212,26 +285,48 @@ const updateEventService = async (id, data) => {
       data.end_time
     );
 
-  return await updateEvent(id, data);
+  return await updateEvent(
+    id,
+    data
+  );
 
 };
 
-const deleteEventService = async (id) => {
+// ===============================
+// Delete Event
+// ===============================
+const deleteEventService = async (
+  id
+) => {
 
-  const existing = await getEventById(id);
+  const existing =
+    await getEventById(id);
 
   if (!existing) {
-    throw new Error("Event not found.");
+
+    throw new Error(
+      "Event not found."
+    );
+
   }
 
   return await deleteEvent(id);
 
 };
 
+// ===============================
+// Exports
+// ===============================
 module.exports = {
+
   createEventService,
+
   getAllEventsService,
+
   getEventByIdService,
+
   updateEventService,
+
   deleteEventService,
+
 };

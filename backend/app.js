@@ -189,6 +189,9 @@ const eventPaymentRoutes = require(
 
 const admissionFollowUpRoutes = require("./src/routes/admissionFollowUpRoutes");
 const branchRoutes = require("./src/routes/branchRoutes");
+const academicYearSessionRoutes = require(
+  "./src/routes/academicYearSessionRoutes"
+);
 
 // Health Check
 app.get("/", (req, res) => {
@@ -322,6 +325,12 @@ app.use(
   "/api/event-registrations",
   eventRegistrationRoutes
 );
+
+app.use(
+  "/api/academic-year-sessions",
+  academicYearSessionRoutes
+);
+
 app.use(
   "/api/event-payments",
   eventPaymentRoutes

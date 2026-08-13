@@ -71,6 +71,7 @@ import Events from "../pages/events/Events";
 import EventRegistrations from "../pages/EventRegistration/EventRegistrations";
 import EventPayments from "../pages/EventPayments/EventPayments";
 import Branches from "../pages/branches/Branches";
+import AcademicYearSessions from "../pages/academicYears/AcademicYearSessions";
 
 import PrivateRoute from "./PrivateRoute";
 
@@ -408,6 +409,11 @@ function AppRoutes() {
       <MasterMediumPage />
     </PrivateRoute>
   }
+/>
+
+<Route
+  path="/academic-year-sessions"
+  element={<AcademicYearSessions />}
 />
 
 <Route

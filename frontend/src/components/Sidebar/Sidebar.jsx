@@ -16,221 +16,304 @@ import {
   Moon,
   Sun,
   BookOpen,
-CalendarDays,
-FileText,
-Clock3,
-Languages,
-Package,
-ChevronDown,
-ChevronRight,
-GraduationCap,
-Library,
-Wallet,
-BadgePercent,
-Settings,
-CalendarHeart
+  CalendarDays,
+  FileText,
+  Clock3,
+  Languages,
+  Package,
+  ChevronDown,
+  GraduationCap,
+  Library,
+  Wallet,
+  BadgePercent,
+  CalendarHeart,
+  Settings,
 } from "lucide-react";
 
 import {
   Link,
   useNavigate,
-  useLocation
+  useLocation,
 } from "react-router-dom";
 
 function Sidebar() {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const navigate =
-    useNavigate();
+  const role =
+    localStorage.getItem("role") || "SUPER_ADMIN";
 
-  const location =
-    useLocation();
+  const [isOpen, setIsOpen] = useState(false);
 
-const role =
-localStorage.getItem("role") || "";
-
-  const [isOpen, setIsOpen] =
-    useState(false);
-
-  const [darkMode, setDarkMode] =
-  useState(
-    localStorage.getItem("theme") ===
-      "dark"
+  const [darkMode, setDarkMode] = useState(
+    localStorage.getItem("theme") === "dark"
   );
 
   const [openMenu, setOpenMenu] = useState("");
 
-const toggleMenu = (menu) => {
-  setOpenMenu(openMenu === menu ? "" : menu);
-};
-
- useEffect(() => {
-
-  const html =
-    document.documentElement;
-
-  if (darkMode) {
-
-    html.classList.add("dark");
-
-  } else {
-
-    html.classList.remove("dark");
-
-  }
-
-  localStorage.setItem(
-    "theme",
-    darkMode ? "dark" : "light"
-  );
-
-}, [darkMode]);
-
-  const handleLogout = () => {
-
-    localStorage.removeItem(
-      "token"
-    );
-
-    localStorage.removeItem(
-      "role"
-    );
-
-    localStorage.removeItem(
-"schoolId"
-);
-
-    localStorage.removeItem(
-      "user"
-    );
-
-    navigate("/login");
-
-  };
+  // =====================================================
+  // DARK MODE
+  // =====================================================
 
   useEffect(() => {
+    const html = document.documentElement;
 
-  if (location.pathname.startsWith("/school")) {
-    setOpenMenu("school");
-  }
+    if (darkMode) {
+      html.classList.add("dark");
+    } else {
+      html.classList.remove("dark");
+    }
 
-  else if (
-    location.pathname.startsWith("/admission")
-  ) {
-    setOpenMenu("admission");
-  }
+    localStorage.setItem(
+      "theme",
+      darkMode ? "dark" : "light"
+    );
+  }, [darkMode]);
 
-  else if (
-    location.pathname.startsWith("/staff")
-  ) {
-    setOpenMenu("staff");
-  }
+  // =====================================================
+  // AUTO OPEN ACTIVE MENU
+  // =====================================================
 
-  else if (
-    location.pathname.startsWith("/student")
-  ) {
-    setOpenMenu("student");
-  }
+  useEffect(() => {
+    const path = location.pathname;
 
-  else if (
-    location.pathname.startsWith("/exam")
-  ) {
-    setOpenMenu("exam");
-  }
+    if (
+      path.startsWith("/schools") ||
+      path.startsWith("/school-branches") ||
+      path.startsWith("/batches") ||
+      path.startsWith("/school-periods") ||
+      path.startsWith("/school-classes") ||
+      path.startsWith("/master-mediums") ||
+      path.startsWith("/school-mediums") ||
+      path.startsWith("/academic-years") ||
+      path.startsWith("/academic-year-sessions") ||
+      path.startsWith("/branches")
+    ) {
+      setOpenMenu("school");
+    } else if (
+      path.startsWith("/staff") ||
+      path.startsWith("/staff-types") ||
+      path.startsWith("/departments") ||
+      path.startsWith("/students")
+    ) {
+      setOpenMenu("people");
+    } else if (
+      path.startsWith("/classes") ||
+      path.startsWith("/exams") ||
+      path.startsWith("/student-marks") ||
+      path.startsWith("/exam-timetable") ||
+      path.startsWith("/report-card") ||
+      path.startsWith("/timetable") ||
+      path.startsWith("/timetable-substitutions")
+    ) {
+      setOpenMenu("academics");
+    } else if (
+      path.startsWith("/fees") ||
+      path.startsWith("/fee-structure") ||
+      path.startsWith("/fee-structure-components") ||
+      path.startsWith("/fee-installments") ||
+      path.startsWith("/fee-discounts") ||
+      path.startsWith("/fee-concessions") ||
+      path.startsWith("/student-fees") ||
+      path.startsWith("/library-fine-payments")
+    ) {
+      setOpenMenu("finance");
+    } else if (
+      path.startsWith("/events") ||
+      path.startsWith("/event-registrations") ||
+      path.startsWith("/event-payments")
+    ) {
+      setOpenMenu("events");
+    } else if (
+      path.startsWith("/attendance") ||
+      path.startsWith("/admission-inquiry") ||
+      path.startsWith("/achievement") ||
+      path.startsWith("/lost-and-found") ||
+      path.startsWith("/school-transfers") ||
+      path.startsWith("/branch-transfers")
+    ) {
+      setOpenMenu("operations");
+    } else if (path.startsWith("/ai")) {
+      setOpenMenu("ai");
+    } else if (path.startsWith("/profile")) {
+      setOpenMenu("account");
+    }
+  }, [location.pathname]);
 
-  else if (
-    location.pathname.startsWith("/fee")
-  ) {
-    setOpenMenu("fees");
-  }
+  // =====================================================
+  // TOGGLE MENU
+  // =====================================================
 
-}, [location.pathname]);
+  const toggleMenu = (menu) => {
+    setOpenMenu(
+      openMenu === menu ? "" : menu
+    );
+  };
+
+  // =====================================================
+  // LOGOUT
+  // =====================================================
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("schoolId");
+    localStorage.removeItem("user");
+
+    navigate("/login");
+  };
+
+  // =====================================================
+  // ACTIVE LINK
+  // =====================================================
+
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
 
   const linkClass = (path) =>
-    `flex items-center gap-3 p-3 rounded-lg transition-all duration-200 ${
-      location.pathname === path
-        ? "bg-blue-600 text-white"
-        : "hover:bg-slate-800"
-    }`;
+    `
+      flex items-center gap-3
+      px-3 py-2.5
+      rounded-xl
+      text-sm
+      transition-all duration-200
+      ${
+        isActive(path)
+          ? "bg-blue-600 text-white shadow-sm"
+          : "text-slate-300 hover:bg-slate-800 hover:text-white"
+      }
+    `;
 
-    const menuButtonClass = (menu) =>
-  `flex items-center justify-between w-full px-3 py-3 rounded-lg transition-all duration-200 ${
-    openMenu === menu
-      ? "bg-blue-600 text-white"
-      : "hover:bg-slate-800"
-  }`;
+  // =====================================================
+  // MENU BUTTON
+  // =====================================================
 
-const subLinkClass = (path) =>
-  `flex items-center gap-3 ml-6 px-3 py-2 rounded-lg transition-all duration-200 text-sm ${
-    location.pathname === path
-      ? "bg-blue-500 text-white"
-      : "hover:bg-slate-800 text-gray-300"
-  }`;
+  const menuButtonClass = (menu) =>
+    `
+      flex items-center justify-between
+      w-full
+      px-3 py-2.5
+      rounded-xl
+      text-sm
+      transition-all duration-200
+      ${
+        openMenu === menu
+          ? "bg-slate-800 text-white"
+          : "text-slate-300 hover:bg-slate-800 hover:text-white"
+      }
+    `;
+
+  // =====================================================
+  // SUB MENU
+  // =====================================================
+
+  const subLinkClass = (path) =>
+    `
+      flex items-center gap-3
+      px-3 py-2
+      ml-3
+      rounded-lg
+      text-sm
+      transition-all duration-200
+      ${
+        isActive(path)
+          ? "bg-blue-600 text-white"
+          : "text-slate-400 hover:bg-slate-800 hover:text-white"
+      }
+    `;
+
+  // =====================================================
+  // CLOSE MOBILE
+  // =====================================================
+
+  const closeMobile = () => {
+    setIsOpen(false);
+  };
+
+  // =====================================================
+  // MENU SECTION
+  // =====================================================
+
+  const SectionTitle = ({ children }) => (
+    <div className="px-3 pt-5 pb-2">
+      <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+        {children}
+      </p>
+    </div>
+  );
 
   return (
     <>
-      {/* Mobile Header */}
+      {/* ================================================= */}
+      {/* MOBILE HEADER */}
+      {/* ================================================= */}
 
-      <div className="md:hidden flex items-center justify-between p-4 bg-slate-900 text-white shadow-lg">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 flex items-center justify-between px-4 py-3 bg-slate-950 text-white shadow-lg">
 
         <button
-          onClick={() =>
-            setIsOpen(!isOpen)
-          }
+          onClick={() => setIsOpen(!isOpen)}
+          className="p-2 rounded-lg hover:bg-slate-800"
         >
           {isOpen ? (
-            <X size={28} />
+            <X size={25} />
           ) : (
-            <Menu size={28} />
+            <Menu size={25} />
           )}
         </button>
 
-        <h2 className="font-bold text-lg">
-          🎓 SchoolMS
-        </h2>
+        <div className="flex items-center gap-2">
+          <span className="text-xl">
+            🎓
+          </span>
+
+          <span className="font-bold">
+            SchoolMS
+          </span>
+        </div>
 
         <button
           onClick={() =>
             setDarkMode(!darkMode)
           }
+          className="p-2 rounded-lg hover:bg-slate-800"
         >
           {darkMode ? (
-            <Sun size={22} />
+            <Sun size={21} />
           ) : (
-            <Moon size={22} />
+            <Moon size={21} />
           )}
         </button>
-
       </div>
 
-      {/* Overlay */}
+      {/* ================================================= */}
+      {/* MOBILE OVERLAY */}
+      {/* ================================================= */}
 
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/40 z-40 md:hidden"
-          onClick={() =>
-            setIsOpen(false)
-          }
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={closeMobile}
         />
       )}
 
-     {/* Sidebar */}
+      {/* ================================================= */}
+      {/* SIDEBAR */}
+      {/* ================================================= */}
 
-<div
-  className={`
-    fixed
-    md:fixed
-    top-0
-    left-0
-    z-50
-    w-64
-    h-screen
-    overflow-y-auto
-    flex
-    flex-col
-          bg-slate-900
+      <aside
+        className={`
+          fixed
+          top-0
+          left-0
+          z-50
+          h-screen
+          w-72
+          bg-slate-950
           text-white
-          shadow-xl
-          transform
+          shadow-2xl
+          flex
+          flex-col
           transition-transform
           duration-300
           ${
@@ -241,27 +324,52 @@ const subLinkClass = (path) =>
         `}
       >
 
-        {/* Logo */}
+        {/* ================================================= */}
+        {/* HEADER / LOGO */}
+        {/* ================================================= */}
 
-        <div className="p-6 border-b border-slate-700">
+        <div className="flex-shrink-0 px-5 py-5 border-b border-slate-800">
 
-          <h2 className="text-2xl font-bold text-center">
-            🎓 SchoolMS
-          </h2>
+          <div className="flex items-center gap-3">
 
-          <p className="text-xs text-gray-400 text-center mt-2">
-            {role || "SUPER_ADMIN"}
-          </p>
+            <div className="w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center text-xl shadow-lg">
+              🎓
+            </div>
 
-          <div className="flex justify-center mt-4">
+            <div>
+              <h2 className="text-lg font-bold">
+                SchoolMS
+              </h2>
+
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                School Management System
+              </p>
+            </div>
+
+          </div>
+
+          {/* ROLE */}
+
+          <div className="mt-4 flex items-center justify-between">
+
+            <div className="px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-800">
+
+              <p className="text-[10px] text-slate-500 uppercase">
+                Logged in as
+              </p>
+
+              <p className="text-xs font-semibold text-blue-400 mt-0.5">
+                {role.replace("_", " ")}
+              </p>
+
+            </div>
 
             <button
               onClick={() =>
-                setDarkMode(
-                  !darkMode
-                )
+                setDarkMode(!darkMode)
               }
-              className="p-2 rounded-lg bg-slate-700 hover:bg-slate-600"
+              className="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 transition"
+              title="Toggle Theme"
             >
               {darkMode ? (
                 <Sun size={18} />
@@ -274,696 +382,741 @@ const subLinkClass = (path) =>
 
         </div>
 
-        <nav className="p-4">
-
-          <ul className="space-y-2">
-
-            <li>
-              <Link
-                to="/dashboard"
-                className={linkClass(
-                  "/dashboard"
-                )}
-                onClick={() =>
-                  setIsOpen(false)
-                }
-              >
-                <LayoutDashboard size={20} />
-                Dashboard
-              </Link>
-            </li>
-
-            {role ===
-              "SUPER_ADMIN" && (
-              <li>
-                <Link
-                  to="/schools"
-                  className={linkClass(
-                    "/schools"
-                  )}
-                  onClick={() =>
-                    setIsOpen(false)
-                  }
-                >
-                  <School size={20} />
-                  Schools
-                </Link>
-              </li>
-            )}
-
-         {(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/school-branches"
-    className={linkClass("/school-branches")}
-    onClick={() => setIsOpen(false)}
-  >
-    <School size={20} />
-    School Branches
-  </Link>
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/batches"
-    className={linkClass("/batches")}
-    onClick={() => setIsOpen(false)}
-  >
-    <BookOpen size={20} />
-    Batch Management
-  </Link>
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/school-periods"
-    className={linkClass("/school-periods")}
-    onClick={() => setIsOpen(false)}
-  >
-    <Clock3 size={20} />
-    School Periods
-  </Link>
-</li>
-
-)}
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/school-classes"
-    className={linkClass("/school-classes")}
-    onClick={() => setIsOpen(false)}
-  >
-    <BookOpen size={20} />
-    School Classes
-  </Link>
-</li>
-
-)}
-{role === "SUPER_ADMIN" && (
-
-<li>
-  <Link
-    to="/master-mediums"
-    className={linkClass("/master-mediums")}
-    onClick={() => setIsOpen(false)}
-  >
-    <Languages size={20} />
-    Master Mediums
-  </Link>
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/school-mediums"
-    className={linkClass("/school-mediums")}
-    onClick={() => setIsOpen(false)}
-  >
-    <Languages size={20} />
-    School Mediums
-  </Link>
-</li>
-
-)}
-
-           {(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/staff"
-    className={linkClass("/staff")}
-    onClick={() => setIsOpen(false)}
-  >
-    <Users size={20} />
-    Staff
-  </Link>
-</li>
-
-)}
-
-            {role ===
-              "SUPER_ADMIN" && (
-              <li>
-                <Link
-                  to="/staff-types"
-                  className={linkClass(
-                    "/staff-types"
-                  )}
-                  onClick={() =>
-                    setIsOpen(false)
-                  }
-                >
-                  <Users size={20} />
-                  Staff Types
-                </Link>
-              </li>
-            )}
-
-            {role ===
-              "SUPER_ADMIN" && (
-              <li>
-                <Link
-                  to="/departments"
-                  className={linkClass(
-                    "/departments"
-                  )}
-                  onClick={() =>
-                    setIsOpen(false)
-                  }
-                >
-                  <Building2 size={20} />
-                  Departments
-                </Link>
-              </li>
-            )}
-
-           {role !== "STUDENT" && (
-
-<li>
-  <Link
-    to="/students"
-    className={linkClass("/students")}
-    onClick={() => setIsOpen(false)}
-  >
-    <UserCheck size={20} />
-    Students
-  </Link>
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<>
-  <li>
-    <Link
-      to="/academic-years"
-      className={linkClass("/academic-years")}
-      onClick={() => setIsOpen(false)}
-    >
-      <CalendarDays size={20} />
-      Academic Years
-    </Link>
-  </li>
-
-  <li>
-    <Link
-      to="/admission-inquiry"
-      className={linkClass("/admission-inquiry")}
-      onClick={() => setIsOpen(false)}
-    >
-      <FileText size={20} />
-      Admission Inquiry
-    </Link>
-  </li>
-
-  <li>
-    <Link
-      to="/admission-follow-up"
-      className={linkClass("/admission-follow-up")}
-      onClick={() => setIsOpen(false)}
-    >
-      <Clock3 size={20} />
-      Admission Follow Up
-    </Link>
-  </li>
-
-  <li>
-    <Link
-      to="/achievement"
-      className={linkClass("/achievement")}
-      onClick={() => setIsOpen(false)}
-    >
-      <BookOpen size={20} />
-      Achievement
-    </Link>
-  </li>
-</>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/events"
-    className={linkClass("/events")}
-    onClick={() => setIsOpen(false)}
-  >
-    <CalendarDays size={20} />
-    Event Management
-  </Link>
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/event-registrations"
-    className={linkClass("/event-registrations")}
-    onClick={() => setIsOpen(false)}
-  >
-    <CalendarHeart size={20} />
-    Event Registrations
-  </Link>
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/event-payments"
-    className={linkClass("/event-payments")}
-    onClick={() => setIsOpen(false)}
-  >
-    <CreditCard size={20} />
-    Event Payments
-  </Link>
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/branches"
-    className={linkClass("/branches")}
-    onClick={() => setIsOpen(false)}
-  >
-    <Building2 size={20} />
-    Branch Master
-  </Link>
-</li>
-
-)}
-
-
-
-            <li>
-              <Link
-                to="/attendance"
-                className={linkClass(
-                  "/attendance"
-                )}
-                onClick={() =>
-                  setIsOpen(false)
-                }
-              >
-                <ClipboardCheck size={20} />
-                Attendance
-              </Link>
-            </li>
-
-            {(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/fees"
-    className={linkClass("/fees")}
-    onClick={() => setIsOpen(false)}
-  >
-    <CreditCard size={20} />
-    Fees
-  </Link>
-</li>
-
-)}
-
-         {(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/fee-structure"
-    className={linkClass("/fee-structure")}
-    onClick={() => setIsOpen(false)}
-  >
-    <CreditCard size={20} />
-    Fee Structure
-  </Link>
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/fee-structure-components"
-    className={linkClass("/fee-structure-components")}
-    onClick={() => setIsOpen(false)}
-  >
-    <Wallet size={20} />
-    Fee Structure Components
-  </Link>
-</li>
-
-)}
-
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/fee-installments"
-    className={linkClass("/fee-installments")}
-    onClick={() => setIsOpen(false)}
-  >
-    <Wallet size={20} />
-    Fee Installments
-  </Link>
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/fee-discounts"
-    className={linkClass("/fee-discounts")}
-    onClick={() => setIsOpen(false)}
-  >
-    <BadgePercent size={20} />
-    Fee Discounts
-  </Link>
-</li>
-
-)}
-
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/fee-concessions"
-    className={linkClass("/fee-concessions")}
-    onClick={() => setIsOpen(false)}
-  >
-    <Wallet size={20} />
-    Fee Concessions
-  </Link>
-</li>
-
-)}
-
-
-
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/student-fees"
-    className={linkClass("/student-fees")}
-    onClick={() => setIsOpen(false)}
-  >
-    <CreditCard size={20} />
-    Fee Collection
-  </Link>
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-
-  <Link
-    to="/library-fine-payments"
-    className={linkClass("/library-fine-payments")}
-    onClick={() => setIsOpen(false)}
-  >
-
-    <CreditCard size={20} />
-
-    Library Fine Payments
-
-  </Link>
-
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-
-  <Link
-    to="/lost-and-found"
-    className={linkClass("/lost-and-found")}
-    onClick={() => setIsOpen(false)}
-  >
-
-    <Package size={20} />
-
-    Lost And Found
-
-  </Link>
-
-</li>
-
-)}
-
-
-{role !== "STUDENT" && (
-
-<li>
-  <Link
-    to="/classes"
-    className={linkClass("/classes")}
-    onClick={() => setIsOpen(false)}
-  >
-    <BookOpen size={20} />
-    Classes
-  </Link>
-</li>
-
-)}
-
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN" ||
-  role === "STAFF") && (
-
-<li>
-  <Link
-    to="/exams"
-    className={linkClass("/exams")}
-    onClick={() => setIsOpen(false)}
-  >
-    <BookOpen size={20} />
-    Exams
-  </Link>
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN" ||
-  role === "STAFF" ||
-  role === "STUDENT") && (
-
-<li>
-  <Link
-    to="/student-marks"
-    className={linkClass("/student-marks")}
-    onClick={() => setIsOpen(false)}
-  >
-    <FileText size={20} />
-    Student Marks
-  </Link>
-</li>
-
-)}
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN" ||
-  role === "STAFF") && (
-  <li>
-    <Link
-      to="/exam-timetable"
-      className={linkClass("/exam-timetable")}
-      onClick={() => setIsOpen(false)}
-    >
-      <CalendarDays size={20} />
-      Exam Timetable
-    </Link>
-  </li>
-)}
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN" ||
-  role === "STAFF" ||
-  role === "STUDENT") && (
-  <li>
-    <Link
-      to="/report-card"
-      className={linkClass("/report-card")}
-      onClick={() => setIsOpen(false)}
-    >
-      <FileText size={20} />
-      Report Card
-    </Link>
-  </li>
-)}
-
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN" ||
-  role === "STAFF" ||
-  role === "STUDENT") && (
-
-<li>
-  <Link
-    to="/timetable"
-    className={linkClass("/timetable")}
-    onClick={() => setIsOpen(false)}
-  >
-    <Clock3 size={20} />
-    Timetable
-  </Link>
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/timetable-substitutions"
-    className={linkClass("/timetable-substitutions")}
-    onClick={() => setIsOpen(false)}
-  >
-    <Clock3 size={20} />
-    Timetable Substitution
-  </Link>
-</li>
-
-)}
-
-            {(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/ai"
-    className={linkClass("/ai")}
-    onClick={() => setIsOpen(false)}
-  >
-    <Bot size={20} />
-    AI Assistant
-  </Link>
-</li>
-
-)}
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/school-transfers"
-    className={linkClass("/school-transfers")}
-    onClick={() => setIsOpen(false)}
-  >
-    <School size={20} />
-    School Transfers
-  </Link>
-</li>
-
-)}
-
-
-{(role === "SUPER_ADMIN" ||
-  role === "SCHOOL_ADMIN") && (
-
-<li>
-  <Link
-    to="/branch-transfers"
-    className={linkClass("/branch-transfers")}
-    onClick={() => setIsOpen(false)}
-  >
-    <Building2 size={20} />
-    Branch Transfers
-  </Link>
-</li>
-
-)}
-
-            <li>
-              <Link
-                to="/profile"
-                className={linkClass(
-                  "/profile"
-                )}
-                onClick={() =>
-                  setIsOpen(false)
-                }
-              >
-                <User size={20} />
-                Profile
-              </Link>
-            </li>
-
-            <li className="pt-4">
+        {/* ================================================= */}
+        {/* NAVIGATION */}
+        {/* ================================================= */}
+
+        <nav className="flex-1 overflow-y-auto px-3 py-3 scrollbar-thin scrollbar-thumb-slate-700">
+
+          {/* ================================================= */}
+          {/* MAIN */}
+          {/* ================================================= */}
+
+          <SectionTitle>
+            Main
+          </SectionTitle>
+
+          <Link
+            to="/dashboard"
+            className={linkClass("/dashboard")}
+            onClick={closeMobile}
+          >
+            <LayoutDashboard size={19} />
+            <span>Dashboard</span>
+          </Link>
+
+          {/* ================================================= */}
+          {/* SCHOOL MANAGEMENT */}
+          {/* ================================================= */}
+
+          {(role === "SUPER_ADMIN" ||
+            role === "SCHOOL_ADMIN") && (
+
+            <>
+              <SectionTitle>
+                Management
+              </SectionTitle>
 
               <button
-                onClick={
-                  handleLogout
+                onClick={() =>
+                  toggleMenu("school")
                 }
-                className="flex items-center gap-3 p-3 rounded-lg hover:bg-red-600 w-full text-left transition-all duration-200"
+                className={menuButtonClass("school")}
               >
-                <LogOut size={20} />
-                Logout
+
+                <div className="flex items-center gap-3">
+                  <School size={19} />
+                  <span>School Management</span>
+                </div>
+
+                <ChevronDown
+                  size={17}
+                  className={`
+                    transition-transform
+                    ${
+                      openMenu === "school"
+                        ? "rotate-180"
+                        : ""
+                    }
+                  `}
+                />
+
               </button>
 
-            </li>
+              {openMenu === "school" && (
 
-          </ul>
+                <div className="mt-1 space-y-1">
+
+                  {role === "SUPER_ADMIN" && (
+                    <Link
+                      to="/schools"
+                      className={subLinkClass("/schools")}
+                      onClick={closeMobile}
+                    >
+                      <School size={16} />
+                      Schools
+                    </Link>
+                  )}
+
+                  <Link
+                    to="/school-branches"
+                    className={subLinkClass("/school-branches")}
+                    onClick={closeMobile}
+                  >
+                    <Building2 size={16} />
+                    School Branches
+                  </Link>
+
+                  <Link
+                    to="/batches"
+                    className={subLinkClass("/batches")}
+                    onClick={closeMobile}
+                  >
+                    <BookOpen size={16} />
+                    Batches
+                  </Link>
+
+                  <Link
+                    to="/school-classes"
+                    className={subLinkClass("/school-classes")}
+                    onClick={closeMobile}
+                  >
+                    <GraduationCap size={16} />
+                    School Classes
+                  </Link>
+
+                  <Link
+                    to="/school-periods"
+                    className={subLinkClass("/school-periods")}
+                    onClick={closeMobile}
+                  >
+                    <Clock3 size={16} />
+                    School Periods
+                  </Link>
+
+                  {role === "SUPER_ADMIN" && (
+                    <Link
+                      to="/master-mediums"
+                      className={subLinkClass("/master-mediums")}
+                      onClick={closeMobile}
+                    >
+                      <Languages size={16} />
+                      Master Mediums
+                    </Link>
+                  )}
+
+                  <Link
+                    to="/school-mediums"
+                    className={subLinkClass("/school-mediums")}
+                    onClick={closeMobile}
+                  >
+                    <Languages size={16} />
+                    School Mediums
+                  </Link>
+
+                  <Link
+                    to="/academic-years"
+                    className={subLinkClass("/academic-years")}
+                    onClick={closeMobile}
+                  >
+                    <CalendarDays size={16} />
+                    Academic Years
+                  </Link>
+
+                  <Link
+                    to="/academic-year-sessions"
+                    className={subLinkClass("/academic-year-sessions")}
+                    onClick={closeMobile}
+                  >
+                    <CalendarDays size={16} />
+                    Academic Sessions
+                  </Link>
+
+                  <Link
+                    to="/branches"
+                    className={subLinkClass("/branches")}
+                    onClick={closeMobile}
+                  >
+                    <Building2 size={16} />
+                    Branch Master
+                  </Link>
+
+                </div>
+
+              )}
+
+            </>
+          )}
+
+          {/* ================================================= */}
+          {/* PEOPLE */}
+          {/* ================================================= */}
+
+          {(role === "SUPER_ADMIN" ||
+            role === "SCHOOL_ADMIN") && (
+
+            <>
+              <button
+                onClick={() =>
+                  toggleMenu("people")
+                }
+                className={`mt-2 ${menuButtonClass("people")}`}
+              >
+
+                <div className="flex items-center gap-3">
+                  <Users size={19} />
+                  <span>People</span>
+                </div>
+
+                <ChevronDown
+                  size={17}
+                  className={
+                    openMenu === "people"
+                      ? "rotate-180 transition-transform"
+                      : "transition-transform"
+                  }
+                />
+
+              </button>
+
+              {openMenu === "people" && (
+
+                <div className="mt-1 space-y-1">
+
+                  <Link
+                    to="/staff"
+                    className={subLinkClass("/staff")}
+                    onClick={closeMobile}
+                  >
+                    <Users size={16} />
+                    Staff
+                  </Link>
+
+                  {role === "SUPER_ADMIN" && (
+                    <>
+                      <Link
+                        to="/staff-types"
+                        className={subLinkClass("/staff-types")}
+                        onClick={closeMobile}
+                      >
+                        <Users size={16} />
+                        Staff Types
+                      </Link>
+
+                      <Link
+                        to="/departments"
+                        className={subLinkClass("/departments")}
+                        onClick={closeMobile}
+                      >
+                        <Building2 size={16} />
+                        Departments
+                      </Link>
+                    </>
+                  )}
+
+                  <Link
+                    to="/students"
+                    className={subLinkClass("/students")}
+                    onClick={closeMobile}
+                  >
+                    <UserCheck size={16} />
+                    Students
+                  </Link>
+
+                </div>
+
+              )}
+
+            </>
+          )}
+
+          {/* ================================================= */}
+          {/* ACADEMICS */}
+          {/* ================================================= */}
+
+          {role !== "STUDENT" && (
+
+            <>
+              <SectionTitle>
+                Academic
+              </SectionTitle>
+
+              <button
+                onClick={() =>
+                  toggleMenu("academics")
+                }
+                className={menuButtonClass("academics")}
+              >
+
+                <div className="flex items-center gap-3">
+                  <GraduationCap size={19} />
+                  <span>Academics</span>
+                </div>
+
+                <ChevronDown
+                  size={17}
+                  className={
+                    openMenu === "academics"
+                      ? "rotate-180 transition-transform"
+                      : "transition-transform"
+                  }
+                />
+
+              </button>
+
+              {openMenu === "academics" && (
+
+                <div className="mt-1 space-y-1">
+
+                  <Link
+                    to="/classes"
+                    className={subLinkClass("/classes")}
+                    onClick={closeMobile}
+                  >
+                    <BookOpen size={16} />
+                    Classes
+                  </Link>
+
+                  <Link
+                    to="/exams"
+                    className={subLinkClass("/exams")}
+                    onClick={closeMobile}
+                  >
+                    <FileText size={16} />
+                    Exams
+                  </Link>
+
+                  <Link
+                    to="/student-marks"
+                    className={subLinkClass("/student-marks")}
+                    onClick={closeMobile}
+                  >
+                    <FileText size={16} />
+                    Student Marks
+                  </Link>
+
+                  {(role === "SUPER_ADMIN" ||
+                    role === "SCHOOL_ADMIN" ||
+                    role === "STAFF") && (
+                    <Link
+                      to="/exam-timetable"
+                      className={subLinkClass("/exam-timetable")}
+                      onClick={closeMobile}
+                    >
+                      <CalendarDays size={16} />
+                      Exam Timetable
+                    </Link>
+                  )}
+
+                  <Link
+                    to="/report-card"
+                    className={subLinkClass("/report-card")}
+                    onClick={closeMobile}
+                  >
+                    <FileText size={16} />
+                    Report Card
+                  </Link>
+
+                  <Link
+                    to="/timetable"
+                    className={subLinkClass("/timetable")}
+                    onClick={closeMobile}
+                  >
+                    <Clock3 size={16} />
+                    Timetable
+                  </Link>
+
+                  {(role === "SUPER_ADMIN" ||
+                    role === "SCHOOL_ADMIN") && (
+                    <Link
+                      to="/timetable-substitutions"
+                      className={subLinkClass("/timetable-substitutions")}
+                      onClick={closeMobile}
+                    >
+                      <Clock3 size={16} />
+                      Timetable Substitution
+                    </Link>
+                  )}
+
+                </div>
+
+              )}
+
+            </>
+          )}
+
+          {/* ================================================= */}
+          {/* FINANCE */}
+          {/* ================================================= */}
+
+          {(role === "SUPER_ADMIN" ||
+            role === "SCHOOL_ADMIN") && (
+
+            <>
+              <SectionTitle>
+                Finance
+              </SectionTitle>
+
+              <button
+                onClick={() =>
+                  toggleMenu("finance")
+                }
+                className={menuButtonClass("finance")}
+              >
+
+                <div className="flex items-center gap-3">
+                  <Wallet size={19} />
+                  <span>Finance</span>
+                </div>
+
+                <ChevronDown
+                  size={17}
+                  className={
+                    openMenu === "finance"
+                      ? "rotate-180 transition-transform"
+                      : "transition-transform"
+                  }
+                />
+
+              </button>
+
+              {openMenu === "finance" && (
+
+                <div className="mt-1 space-y-1">
+
+                  <Link
+                    to="/fees"
+                    className={subLinkClass("/fees")}
+                    onClick={closeMobile}
+                  >
+                    <CreditCard size={16} />
+                    Fees
+                  </Link>
+
+                  <Link
+                    to="/fee-structure"
+                    className={subLinkClass("/fee-structure")}
+                    onClick={closeMobile}
+                  >
+                    <CreditCard size={16} />
+                    Fee Structure
+                  </Link>
+
+                  <Link
+                    to="/fee-structure-components"
+                    className={subLinkClass("/fee-structure-components")}
+                    onClick={closeMobile}
+                  >
+                    <Wallet size={16} />
+                    Fee Components
+                  </Link>
+
+                  <Link
+                    to="/fee-installments"
+                    className={subLinkClass("/fee-installments")}
+                    onClick={closeMobile}
+                  >
+                    <Wallet size={16} />
+                    Fee Installments
+                  </Link>
+
+                  <Link
+                    to="/fee-discounts"
+                    className={subLinkClass("/fee-discounts")}
+                    onClick={closeMobile}
+                  >
+                    <BadgePercent size={16} />
+                    Fee Discounts
+                  </Link>
+
+                  <Link
+                    to="/fee-concessions"
+                    className={subLinkClass("/fee-concessions")}
+                    onClick={closeMobile}
+                  >
+                    <Wallet size={16} />
+                    Fee Concessions
+                  </Link>
+
+                  <Link
+                    to="/student-fees"
+                    className={subLinkClass("/student-fees")}
+                    onClick={closeMobile}
+                  >
+                    <CreditCard size={16} />
+                    Fee Collection
+                  </Link>
+
+                  <Link
+                    to="/library-fine-payments"
+                    className={subLinkClass("/library-fine-payments")}
+                    onClick={closeMobile}
+                  >
+                    <Library size={16} />
+                    Library Fine Payments
+                  </Link>
+
+                </div>
+
+              )}
+
+            </>
+          )}
+
+          {/* ================================================= */}
+          {/* EVENTS */}
+          {/* ================================================= */}
+
+          {(role === "SUPER_ADMIN" ||
+            role === "SCHOOL_ADMIN") && (
+
+            <>
+              <SectionTitle>
+                Events
+              </SectionTitle>
+
+              <button
+                onClick={() =>
+                  toggleMenu("events")
+                }
+                className={menuButtonClass("events")}
+              >
+
+                <div className="flex items-center gap-3">
+                  <CalendarHeart size={19} />
+                  <span>Events</span>
+                </div>
+
+                <ChevronDown
+                  size={17}
+                  className={
+                    openMenu === "events"
+                      ? "rotate-180 transition-transform"
+                      : "transition-transform"
+                  }
+                />
+
+              </button>
+
+              {openMenu === "events" && (
+
+                <div className="mt-1 space-y-1">
+
+                  <Link
+                    to="/events"
+                    className={subLinkClass("/events")}
+                    onClick={closeMobile}
+                  >
+                    <CalendarDays size={16} />
+                    Event Management
+                  </Link>
+
+                  <Link
+                    to="/event-registrations"
+                    className={subLinkClass("/event-registrations")}
+                    onClick={closeMobile}
+                  >
+                    <CalendarHeart size={16} />
+                    Event Registrations
+                  </Link>
+
+                  <Link
+                    to="/event-payments"
+                    className={subLinkClass("/event-payments")}
+                    onClick={closeMobile}
+                  >
+                    <CreditCard size={16} />
+                    Event Payments
+                  </Link>
+
+                </div>
+
+              )}
+
+            </>
+          )}
+
+          {/* ================================================= */}
+          {/* OPERATIONS */}
+          {/* ================================================= */}
+
+          <>
+            <SectionTitle>
+              Operations
+            </SectionTitle>
+
+            <button
+              onClick={() =>
+                toggleMenu("operations")
+              }
+              className={menuButtonClass("operations")}
+            >
+
+              <div className="flex items-center gap-3">
+                <ClipboardCheck size={19} />
+                <span>Operations</span>
+              </div>
+
+              <ChevronDown
+                size={17}
+                className={
+                  openMenu === "operations"
+                    ? "rotate-180 transition-transform"
+                    : "transition-transform"
+                }
+              />
+
+            </button>
+
+            {openMenu === "operations" && (
+
+              <div className="mt-1 space-y-1">
+
+                <Link
+                  to="/attendance"
+                  className={subLinkClass("/attendance")}
+                  onClick={closeMobile}
+                >
+                  <ClipboardCheck size={16} />
+                  Attendance
+                </Link>
+
+                {(role === "SUPER_ADMIN" ||
+                  role === "SCHOOL_ADMIN") && (
+                  <>
+                    <Link
+                      to="/admission-inquiry"
+                      className={subLinkClass("/admission-inquiry")}
+                      onClick={closeMobile}
+                    >
+                      <FileText size={16} />
+                      Admission Inquiry
+                    </Link>
+
+                    <Link
+                      to="/achievement"
+                      className={subLinkClass("/achievement")}
+                      onClick={closeMobile}
+                    >
+                      <GraduationCap size={16} />
+                      Achievement
+                    </Link>
+
+                    <Link
+                      to="/lost-and-found"
+                      className={subLinkClass("/lost-and-found")}
+                      onClick={closeMobile}
+                    >
+                      <Package size={16} />
+                      Lost & Found
+                    </Link>
+
+                    <Link
+                      to="/school-transfers"
+                      className={subLinkClass("/school-transfers")}
+                      onClick={closeMobile}
+                    >
+                      <School size={16} />
+                      School Transfers
+                    </Link>
+
+                    <Link
+                      to="/branch-transfers"
+                      className={subLinkClass("/branch-transfers")}
+                      onClick={closeMobile}
+                    >
+                      <Building2 size={16} />
+                      Branch Transfers
+                    </Link>
+                  </>
+                )}
+
+              </div>
+
+            )}
+
+          </>
+
+          {/* ================================================= */}
+          {/* AI */}
+          {/* ================================================= */}
+
+          {(role === "SUPER_ADMIN" ||
+            role === "SCHOOL_ADMIN") && (
+
+            <>
+              <SectionTitle>
+                Smart Tools
+              </SectionTitle>
+
+              <Link
+                to="/ai"
+                className={linkClass("/ai")}
+                onClick={closeMobile}
+              >
+                <Bot size={19} />
+                <span>AI Assistant</span>
+              </Link>
+
+            </>
+          )}
+
+          {/* ================================================= */}
+          {/* ACCOUNT */}
+          {/* ================================================= */}
+
+          <SectionTitle>
+            Account
+          </SectionTitle>
+
+          <Link
+            to="/profile"
+            className={linkClass("/profile")}
+            onClick={closeMobile}
+          >
+            <User size={19} />
+            <span>Profile</span>
+          </Link>
 
         </nav>
 
-      </div>
+        {/* ================================================= */}
+        {/* FOOTER */}
+        {/* ================================================= */}
+
+        <div className="flex-shrink-0 border-t border-slate-800 p-3">
+
+          <button
+            onClick={handleLogout}
+            className="
+              w-full
+              flex
+              items-center
+              gap-3
+              px-3
+              py-2.5
+              rounded-xl
+              text-sm
+              text-red-400
+              hover:bg-red-500/10
+              hover:text-red-300
+              transition
+            "
+          >
+
+            <LogOut size={19} />
+
+            <span>
+              Logout
+            </span>
+
+          </button>
+
+        </div>
+
+      </aside>
     </>
   );
-
 }
 
 export default Sidebar;

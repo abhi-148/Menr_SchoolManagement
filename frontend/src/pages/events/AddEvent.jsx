@@ -19,6 +19,7 @@ const AddEvent = ({
   const role = localStorage.getItem("role");
 
   const [loading, setLoading] = useState(false);
+  const [preview, setPreview] = useState("");
 
   const [schools, setSchools] = useState([]);
   const [academicYears, setAcademicYears] = useState([]);
@@ -47,6 +48,16 @@ const AddEvent = ({
 
     organizers: "",
 
+    event_schedule: [
+  {
+    title: "",
+    date: "",
+    start_time: "",
+    end_time: "",
+    venue: "",
+  },
+],
+
     start_date: "",
 
     end_date: "",
@@ -67,8 +78,9 @@ const AddEvent = ({
 
     is_holiday: 0,
 
-    status: "DRAFT",
-
+   event_status: "DRAFT",
+status: "ACTIVE",
+cover_image: null,
   });
 
   useEffect(() => {
@@ -159,6 +171,21 @@ const AddEvent = ({
       organizers:
         editData.organizers || "",
 
+        event_schedule:
+  editData.event_schedule &&
+  editData.event_schedule.length > 0
+    ? editData.event_schedule
+    : [
+        {
+          title: "",
+          date: "",
+          start_time: "",
+          end_time: "",
+          venue: "",
+        },
+      ],
+
+
       start_date:
         editData.start_date?.split("T")[0] || "",
 
@@ -189,8 +216,12 @@ const AddEvent = ({
       is_holiday:
         editData.is_holiday || 0,
 
-      status:
-        editData.status || "DRAFT",
+      event_status:
+  editData.event_status || "DRAFT",
+
+status:
+  editData.status || "ACTIVE",
+  cover_image: editData.cover_image || null,
 
     });
 
@@ -210,8 +241,91 @@ const AddEvent = ({
 
   };
 
+  const handleImageChange = (e) => {
+
+  const file = e.target.files[0];
+
+  if (!file) return;
+
+  setFormData((prev) => ({
+    ...prev,
+    cover_image: file,
+  }));
+
+  setPreview(URL.createObjectURL(file));
+
+};
+
+  const handleScheduleChange = (
+  index,
+  field,
+  value
+) => {
+
+  const updated = [...formData.event_schedule];
+
+  updated[index][field] = value;
+
+  setFormData({
+    ...formData,
+    event_schedule: updated,
+  });
+
+};
+
+const addSchedule = () => {
+
+  setFormData({
+
+    ...formData,
+
+    event_schedule: [
+
+      ...formData.event_schedule,
+
+      {
+
+        title: "",
+
+        date: "",
+
+        start_time: "",
+
+        end_time: "",
+
+        venue: "",
+
+      },
+
+    ],
+
+  });
+
+};
+
+const removeSchedule = (index) => {
+
+  const updated = [...formData.event_schedule];
+
+  updated.splice(index, 1);
+
+  setFormData({
+
+    ...formData,
+
+    event_schedule: updated,
+
+  });
+
+};
+
   const handleSubmit = async (e) => {
     console.log("Submitting Form:", formData);
+    console.log("Branches Array:", branches);
+console.log(
+  "Selected Branch:",
+  formData.school_branch_id
+);
 
     e.preventDefault();
 
@@ -219,20 +333,48 @@ const AddEvent = ({
 
       setLoading(true);
 
-      if (editData) {
+     const data = new FormData();
 
-        await updateEvent(
-          editData.event_id,
-          formData
-        );
+Object.keys(formData).forEach((key) => {
 
-      } else {
+  if (key === "event_schedule") {
+    data.append(
+      "event_schedule",
+      JSON.stringify(formData.event_schedule)
+    );
+  }
 
-        await createEvent(
-          formData
-        );
+  else if (key === "cover_image") {
 
-      }
+    if (formData.cover_image) {
+      data.append(
+        "cover_image",
+        formData.cover_image
+      );
+    }
+
+  }
+
+  else {
+
+    data.append(key, formData[key]);
+
+  }
+
+});
+
+if (editData) {
+
+  await updateEvent(
+    editData.event_id,
+    data
+  );
+
+} else {
+
+  await createEvent(data);
+
+}
 
       onSuccess();
 
@@ -373,8 +515,8 @@ const AddEvent = ({
            {branches.map((branch) => (
 
   <option
-    key={branch.id}
-    value={branch.id}
+    key={branch.branch_id}
+    value={branch.branch_id}
   >
     {branch.branch_name}
   </option>
@@ -520,104 +662,198 @@ const AddEvent = ({
             Event Schedule
         =========================== */}
 
-        <div className="md:col-span-2 mt-5">
-          <h3 className="text-lg font-semibold border-b pb-2">
-            Event Schedule
-          </h3>
-        </div>
-                {/* Start Date */}
+       
 
-        <div>
+        <div className="md:col-span-2">
 
-          <label className="block mb-2 font-medium">
-            Start Date
-          </label>
+  <div className="flex justify-between items-center mb-4">
 
-          <input
-            type="date"
-            name="start_date"
-            value={formData.start_date}
-            onChange={handleChange}
-            required
-            className="w-full border rounded-lg p-3"
-          />
+    <h3 className="text-lg font-semibold">
+      Event Schedule
+    </h3>
 
-        </div>
+    <button
+      type="button"
+      onClick={addSchedule}
+      className="bg-green-600 text-white px-4 py-2 rounded-lg"
+    >
+      + Add Schedule
+    </button>
 
-        {/* End Date */}
+  </div>
 
-        <div>
+  {formData.event_schedule.map((item, index) => (
 
-          <label className="block mb-2 font-medium">
-            End Date
-          </label>
+    <div
+      key={index}
+      className="border rounded-lg p-4 mb-4"
+    >
 
-          <input
-            type="date"
-            name="end_date"
-            value={formData.end_date}
-            onChange={handleChange}
-            required
-            className="w-full border rounded-lg p-3"
-          />
+      <div className="grid grid-cols-5 gap-4">
 
-        </div>
+        <input
+          type="text"
+          placeholder="Title"
+          value={item.title}
+          onChange={(e)=>
+            handleScheduleChange(
+              index,
+              "title",
+              e.target.value
+            )
+          }
+          className="border rounded-lg p-3"
+        />
 
-        {/* Start Time */}
+        <input
+          type="date"
+          value={item.date}
+          onChange={(e)=>
+            handleScheduleChange(
+              index,
+              "date",
+              e.target.value
+            )
+          }
+          className="border rounded-lg p-3"
+        />
 
-        <div>
+        <input
+          type="time"
+          value={item.start_time}
+          onChange={(e)=>
+            handleScheduleChange(
+              index,
+              "start_time",
+              e.target.value
+            )
+          }
+          className="border rounded-lg p-3"
+        />
 
-          <label className="block mb-2 font-medium">
-            Start Time
-          </label>
+        <input
+          type="time"
+          value={item.end_time}
+          onChange={(e)=>
+            handleScheduleChange(
+              index,
+              "end_time",
+              e.target.value
+            )
+          }
+          className="border rounded-lg p-3"
+        />
 
-          <input
-            type="time"
-            name="start_time"
-            value={formData.start_time}
-            onChange={handleChange}
-            className="w-full border rounded-lg p-3"
-          />
+        <input
+          type="text"
+          placeholder="Venue"
+          value={item.venue}
+          onChange={(e)=>
+            handleScheduleChange(
+              index,
+              "venue",
+              e.target.value
+            )
+          }
+          className="border rounded-lg p-3"
+        />
 
-        </div>
+      </div>
 
-        {/* End Time */}
+      {formData.event_schedule.length > 1 && (
 
-        <div>
+        <button
+          type="button"
+          onClick={() =>
+            removeSchedule(index)
+          }
+          className="bg-red-600 text-white px-3 py-2 rounded mt-3"
+        >
+          Remove
+        </button>
 
-          <label className="block mb-2 font-medium">
-            End Time
-          </label>
+      )}
 
-          <input
-            type="time"
-            name="end_time"
-            value={formData.end_time}
-            onChange={handleChange}
-            className="w-full border rounded-lg p-3"
-          />
+    </div>
 
-        </div>
+  ))}
 
-        {/* Venue */}
+</div>
 
-        <div>
+{/* Start Date */}
 
-          <label className="block mb-2 font-medium">
-            Venue
-          </label>
+<div>
 
-          <input
-            type="text"
-            name="venue"
-            value={formData.venue}
-            onChange={handleChange}
-            placeholder="School Auditorium"
-            className="w-full border rounded-lg p-3"
-          />
+  <label className="block mb-2 font-medium">
+    Start Date
+  </label>
 
-        </div>
+  <input
+    type="date"
+    name="start_date"
+    value={formData.start_date}
+    onChange={handleChange}
+    required
+    className="w-full border rounded-lg p-3"
+  />
 
+</div>
+
+{/* End Date */}
+
+<div>
+
+  <label className="block mb-2 font-medium">
+    End Date
+  </label>
+
+  <input
+    type="date"
+    name="end_date"
+    value={formData.end_date}
+    onChange={handleChange}
+    required
+    className="w-full border rounded-lg p-3"
+  />
+
+</div>
+
+{/* Start Time */}
+
+<div>
+
+  <label className="block mb-2 font-medium">
+    Start Time
+  </label>
+
+  <input
+    type="time"
+    name="start_time"
+    value={formData.start_time}
+    onChange={handleChange}
+    className="w-full border rounded-lg p-3"
+  />
+
+</div>
+
+{/* End Time */}
+
+<div>
+
+  <label className="block mb-2 font-medium">
+    End Time
+  </label>
+
+  <input
+    type="time"
+    name="end_time"
+    value={formData.end_time}
+    onChange={handleChange}
+    className="w-full border rounded-lg p-3"
+  />
+
+</div>
+          
         {/* Organizers */}
 
         <div>
@@ -726,6 +962,38 @@ const AddEvent = ({
           </h3>
         </div>
 
+        {/* Event Cover Image */}
+
+<div className="md:col-span-2">
+
+  <label className="block mb-2 font-medium">
+    Event Cover Image
+  </label>
+
+  <input
+    type="file"
+    accept="image/*"
+    onChange={handleImageChange}
+    className="w-full border rounded-lg p-3"
+  />
+
+  {(preview || formData.cover_image) && (
+
+    <img
+      src={
+        preview
+          ? preview
+          : `http://localhost:5000/uploads/${formData.cover_image}`
+      }
+      alt="Cover"
+      className="mt-4 h-48 rounded-lg border object-cover"
+    />
+
+  )}
+
+</div>
+
+
                 {/* Event Description */}
 
         <div className="md:col-span-2">
@@ -791,22 +1059,39 @@ const AddEvent = ({
 
         <div>
 
-          <label className="block mb-2 font-medium">
-            Status
-          </label>
+         <label className="block mb-2 font-medium">
+    Event Status
+</label>
 
-          <select
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="w-full border rounded-lg p-3"
-          >
-            <option value="DRAFT">DRAFT</option>
-            <option value="UPCOMING">UPCOMING</option>
-            <option value="ONGOING">ONGOING</option>
-            <option value="COMPLETED">COMPLETED</option>
-            <option value="CANCELLED">CANCELLED</option>
-          </select>
+<select
+    name="event_status"
+    value={formData.event_status}
+    onChange={handleChange}
+    className="w-full border rounded-lg p-3"
+>
+    <option value="DRAFT">DRAFT</option>
+    <option value="PUBLISHED">PUBLISHED</option>
+    <option value="COMPLETED">COMPLETED</option>
+    <option value="CANCELLED">CANCELLED</option>
+</select>
+
+<div>
+
+<label className="block mb-2 font-medium">
+Record Status
+</label>
+
+<select
+    name="status"
+    value={formData.status}
+    onChange={handleChange}
+    className="w-full border rounded-lg p-3"
+>
+    <option value="ACTIVE">ACTIVE</option>
+    <option value="INACTIVE">INACTIVE</option>
+</select>
+
+</div>
 
         </div>
 
