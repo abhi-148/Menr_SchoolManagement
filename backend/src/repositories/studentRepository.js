@@ -385,7 +385,283 @@ const updateStudentBranch = async (
   return result;
 
 };
+
+// =========================================================
+// STUDENT DASHBOARD
+// =========================================================
+
+const getStudentDashboardProfile = async (studentId) => {
+
+  const [rows] = await pool.query(
+    `
+    SELECT
+      s.id,
+      s.school_id,
+      s.branch_id,
+      s.school_class_id,
+      s.section_id,
+      s.full_name,
+      s.roll_number,
+      s.gender,
+      s.dob,
+      s.phone,
+      s.address,
+      s.status,
+      c.class_name,
+      sec.section_name,
+      sb.branch_name
+    FROM student s
+
+    LEFT JOIN school_classes sc
+      ON s.school_class_id = sc.id
+
+    LEFT JOIN classes c
+      ON sc.class_id = c.id
+
+    LEFT JOIN sections sec
+      ON s.section_id = sec.id
+
+    LEFT JOIN school_branches sb
+      ON s.branch_id = sb.id
+
+    WHERE s.id = ?
+    `,
+    [studentId]
+  );
+
+  return rows[0];
+};
+
+
+// Student Subjects
+const getStudentDashboardSubjects = async (
+  studentId
+) => {
+
+  const [rows] = await pool.query(
+    `
+    SELECT
+      cs.id,
+      cs.school_class_id,
+      cs.subject_id,
+      sub.subject_name,
+      sub.subject_code,
+      cs.status
+
+    FROM student s
+
+    INNER JOIN class_subjects cs
+      ON cs.school_class_id = s.school_class_id
+
+    INNER JOIN subjects sub
+      ON sub.id = cs.subject_id
+
+    WHERE
+      s.id = ?
+      AND cs.status = 'active'
+      AND sub.status = 'active'
+
+    ORDER BY sub.subject_name ASC
+    `,
+    [studentId]
+  );
+
+  return rows;
+};
+
+
+// Student Attendance Summary
+const getStudentDashboardAttendance = async (
+  studentId
+) => {
+
+  const [rows] = await pool.query(
+    `
+    SELECT
+
+      COUNT(*) AS total_days,
+
+      SUM(
+        CASE
+          WHEN status = 'PRESENT'
+          THEN 1
+          ELSE 0
+        END
+      ) AS present_days,
+
+      SUM(
+        CASE
+          WHEN status = 'ABSENT'
+          THEN 1
+          ELSE 0
+        END
+      ) AS absent_days
+
+    FROM attendance
+
+    WHERE student_id = ?
+    `,
+    [studentId]
+  );
+
+  const data = rows[0] || {};
+
+  const totalDays =
+    Number(data.total_days || 0);
+
+  const presentDays =
+    Number(data.present_days || 0);
+
+  const absentDays =
+    Number(data.absent_days || 0);
+
+  const percentage =
+    totalDays > 0
+      ? Number(
+          (
+            (presentDays / totalDays) *
+            100
+          ).toFixed(2)
+        )
+      : 0;
+
+  return {
+    total_days: totalDays,
+    present_days: presentDays,
+    absent_days: absentDays,
+    percentage
+  };
+};
+
+
+// Student Marks / Results
+const getStudentDashboardMarks = async (
+  studentId
+) => {
+
+  const [rows] = await pool.query(
+    `
+    SELECT
+
+      sm.id,
+      sm.exam_id,
+      sm.student_id,
+      sm.subject_id,
+
+      e.exam_name,
+
+      sub.subject_name,
+      sub.subject_code,
+
+      sm.max_marks,
+      sm.obtained_marks,
+      sm.remarks,
+
+      CASE
+        WHEN sm.max_marks > 0
+        THEN ROUND(
+          (
+            sm.obtained_marks /
+            sm.max_marks
+          ) * 100,
+          2
+        )
+        ELSE 0
+      END AS percentage
+
+    FROM student_marks sm
+
+    INNER JOIN exams e
+      ON e.id = sm.exam_id
+
+    INNER JOIN subjects sub
+      ON sub.id = sm.subject_id
+
+    WHERE sm.student_id = ?
+
+    ORDER BY sm.id DESC
+    `,
+    [studentId]
+  );
+
+  return rows;
+};
+
+
+// Student Fees
+const getStudentDashboardFees = async (
+  studentId
+) => {
+
+  const [feeRows] = await pool.query(
+    `
+    SELECT
+
+      COALESCE(
+        SUM(amount),
+        0
+      ) AS total_fee,
+
+      COUNT(*) AS fee_records
+
+    FROM fees
+
+    WHERE student_id = ?
+    `,
+    [studentId]
+  );
+
+
+  const [paymentRows] = await pool.query(
+    `
+    SELECT
+
+      COALESCE(
+        SUM(amount_paid),
+        0
+      ) AS paid_amount
+
+    FROM student_fee_payments
+
+    WHERE student_id = ?
+    `,
+    [studentId]
+  );
+
+
+  const totalFee =
+    Number(
+      feeRows[0]?.total_fee || 0
+    );
+
+  const paidAmount =
+    Number(
+      paymentRows[0]?.paid_amount || 0
+    );
+
+  const dueAmount =
+    Math.max(
+      totalFee - paidAmount,
+      0
+    );
+
+
+  let status = "PAID";
+
+  if (dueAmount > 0) {
+    status = "PENDING";
+  }
+
+
+  return {
+    total_fee: totalFee,
+    paid_amount: paidAmount,
+    due_amount: dueAmount,
+    status
+  };
+};
 module.exports = {
+
   createStudent,
   getAllStudents,
   getStudentsBySchool,
@@ -398,5 +674,13 @@ module.exports = {
   searchStudents,
   findStudentByRollNumber,
   updateStudentPassword,
-  getStudentPasswordById
+  getStudentPasswordById,
+
+  // Dashboard
+  getStudentDashboardProfile,
+  getStudentDashboardSubjects,
+  getStudentDashboardAttendance,
+  getStudentDashboardMarks,
+  getStudentDashboardFees
+
 };

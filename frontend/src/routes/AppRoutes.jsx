@@ -15,6 +15,9 @@ import Staff from "../pages/Staff/Staff";
 import StaffType from "../pages/StaffType/StaffType";
 import StaffDepartment from "../pages/StaffDepartment/StaffDepartment";
 import Students from "../pages/Students/Students";
+import StaffSchedule from "../pages/StaffSchedule/StaffSchedule";
+import StaffAttendance from "../pages/StaffAttendance/StaffAttendance";
+import LeaveRequest from "../pages/LeaveRequest/LeaveRequest";
 import Attendance from "../pages/Attendance/Attendance";
 import Fees from "../pages/Fees/Fees";
 import Profile from "../pages/Profile/Profile";
@@ -151,6 +154,33 @@ function AppRoutes() {
             </PrivateRoute>
           }
         />
+
+        <Route
+  path="/staff-schedules"
+  element={
+    <PrivateRoute>
+      <StaffSchedule />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/staff-attendance"
+  element={
+    <PrivateRoute>
+      <StaffAttendance />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/leave-requests"
+  element={
+    <PrivateRoute>
+      <LeaveRequest />
+    </PrivateRoute>
+  }
+/>
 
         <Route
           path="/students"

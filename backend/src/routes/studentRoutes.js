@@ -12,6 +12,9 @@ const {
   createStudentValidation
 } = require("../validators/studentValidator");
 
+const authorizeRoles =
+  require("../middlewares/roleMiddleware");
+
 const {
   createStudent,
   getAllStudents,
@@ -23,7 +26,8 @@ const {
   searchStudents,
   loginStudent,
   getStudentProfile,
-  changeStudentPassword
+  changeStudentPassword,
+  getStudentDashboard,
 } = require("../controllers/studentController");
 
 /* ===========================
@@ -41,6 +45,16 @@ router.get(
   "/profile",
   authMiddleware,
   getStudentProfile
+);
+
+// Student Dashboard
+router.get(
+  "/dashboard",
+  authMiddleware,
+  authorizeRoles(
+    "STUDENT"
+  ),
+  getStudentDashboard
 );
 
 // Update Own Profile

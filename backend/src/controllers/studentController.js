@@ -7,7 +7,8 @@ const {
   getStudentsWithPaginationService,
   searchStudentsService,
   loginStudentService,
-  changeStudentPasswordService
+  changeStudentPasswordService,
+  getStudentDashboardService
 } = require("../services/studentService");
 
 const createStudent = async (req, res) => {
@@ -54,6 +55,50 @@ const getAllStudents = async (req, res) => {
     });
 
   }
+};
+// =========================================================
+// STUDENT DASHBOARD
+// =========================================================
+
+const getStudentDashboard = async (
+  req,
+  res
+) => {
+
+  try {
+
+    const dashboard =
+      await getStudentDashboardService(
+        req.user.id
+      );
+
+
+    return res.status(200).json({
+
+      success: true,
+
+      data: dashboard
+
+    });
+
+  } catch (error) {
+
+    console.error(
+      "STUDENT DASHBOARD ERROR:",
+      error
+    );
+
+
+    return res.status(500).json({
+
+      success: false,
+
+      message: error.message
+
+    });
+
+  }
+
 };
 
 const getStudentById = async (req, res) => {
@@ -333,5 +378,6 @@ module.exports = {
   searchStudents,
   loginStudent,
   getStudentProfile,
+  getStudentDashboard,
   changeStudentPassword
 };

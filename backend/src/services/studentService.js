@@ -12,7 +12,14 @@ const {
   searchStudents,
   findStudentByRollNumber,
   updateStudentPassword,
-  getStudentPasswordById
+  getStudentPasswordById,
+
+  getStudentDashboardProfile,
+  getStudentDashboardSubjects,
+  getStudentDashboardAttendance,
+  getStudentDashboardMarks,
+  getStudentDashboardFees
+
 } = require("../repositories/studentRepository");
 
 const createStudentService = async (studentData) => {
@@ -206,6 +213,69 @@ const changeStudentPasswordService = async (
       "Password Changed Successfully"
   };
 };
+
+// =========================================================
+// STUDENT DASHBOARD SERVICE
+// =========================================================
+
+const getStudentDashboardService = async (
+  studentId
+) => {
+
+  const profile =
+    await getStudentDashboardProfile(
+      studentId
+    );
+
+
+  if (!profile) {
+
+    throw new Error(
+      "Student Not Found"
+    );
+
+  }
+
+
+  const subjects =
+    await getStudentDashboardSubjects(
+      studentId
+    );
+
+
+  const attendance =
+    await getStudentDashboardAttendance(
+      studentId
+    );
+
+
+  const marks =
+    await getStudentDashboardMarks(
+      studentId
+    );
+
+
+  const fees =
+    await getStudentDashboardFees(
+      studentId
+    );
+
+
+  return {
+
+    profile,
+
+    subjects,
+
+    attendance,
+
+    marks,
+
+    fees
+
+  };
+
+};
 module.exports = {
   createStudentService,
   getAllStudentsService,
@@ -215,5 +285,6 @@ module.exports = {
   getStudentsWithPaginationService,
   searchStudentsService,
   loginStudentService,
+  getStudentDashboardService,
   changeStudentPasswordService
 };

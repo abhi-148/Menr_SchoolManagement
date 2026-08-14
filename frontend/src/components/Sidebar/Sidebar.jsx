@@ -91,13 +91,16 @@ function Sidebar() {
     ) {
       setOpenMenu("school");
     } else if (
-      path.startsWith("/staff") ||
-      path.startsWith("/staff-types") ||
-      path.startsWith("/departments") ||
-      path.startsWith("/students")
-    ) {
-      setOpenMenu("people");
-    } else if (
+  path.startsWith("/staff") ||
+  path.startsWith("/staff-types") ||
+  path.startsWith("/departments") ||
+  path.startsWith("/staff-schedules") ||
+  path.startsWith("/staff-attendance") ||
+  path.startsWith("/leave-requests") ||
+  path.startsWith("/students")
+) {
+  setOpenMenu("people");
+} else if (
       path.startsWith("/classes") ||
       path.startsWith("/exams") ||
       path.startsWith("/student-marks") ||
@@ -591,6 +594,35 @@ function Sidebar() {
                     <Users size={16} />
                     Staff
                   </Link>
+
+                  <Link
+  to="/staff-schedules"
+  className={subLinkClass("/staff-schedules")}
+  onClick={closeMobile}
+>
+  <Clock3 size={16} />
+  Staff Schedule
+</Link>
+
+<Link
+  to="/staff-attendance"
+  className={subLinkClass("/staff-attendance")}
+  onClick={closeMobile}
+>
+  <ClipboardCheck size={16} />
+  Staff Attendance
+</Link>
+
+<Link
+  to="/leave-requests"
+  className={subLinkClass("/leave-requests")}
+  onClick={closeMobile}
+>
+  <CalendarDays size={16} />
+  Leave Requests
+</Link>
+
+
 
                   {role === "SUPER_ADMIN" && (
                     <>

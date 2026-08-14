@@ -319,7 +319,15 @@ const getDashboardStats = async () => {
 // SCHOOL ADMIN DASHBOARD
 // =========================================================
 
+// =========================================================
+// SCHOOL ADMIN DASHBOARD
+// =========================================================
+
 const getSchoolDashboardStats = async (schoolId) => {
+
+  // =======================================================
+  // BASIC COUNTS
+  // =======================================================
 
   const [branches] = await pool.query(`
     SELECT COUNT(*) AS totalBranches
@@ -327,11 +335,13 @@ const getSchoolDashboardStats = async (schoolId) => {
     WHERE school_id = ?
   `, [schoolId]);
 
+
   const [staff] = await pool.query(`
     SELECT COUNT(*) AS totalStaff
     FROM staff
     WHERE school_id = ?
   `, [schoolId]);
+
 
   const [students] = await pool.query(`
     SELECT COUNT(*) AS totalStudents
@@ -339,186 +349,460 @@ const getSchoolDashboardStats = async (schoolId) => {
     WHERE school_id = ?
   `, [schoolId]);
 
+
+  // School-specific classes
   const [classes] = await pool.query(`
     SELECT COUNT(*) AS totalClasses
-    FROM classes
-  `);
+    FROM school_classes
+    WHERE school_id = ?
+  `, [schoolId]);
+
 
   const [subjects] = await pool.query(`
     SELECT COUNT(*) AS totalSubjects
     FROM subjects
   `);
 
+
+  const [staffTypes] = await pool.query(`
+    SELECT COUNT(*) AS totalStaffTypes
+    FROM staff_type
+  `);
+
+
+  const [departments] = await pool.query(`
+    SELECT COUNT(*) AS totalDepartments
+    FROM staff_department
+  `);
+
+
+  // =======================================================
+  // ATTENDANCE
+  // =======================================================
+
   const [present] = await pool.query(`
     SELECT COUNT(*) AS presentToday
+
     FROM attendance a
+
     INNER JOIN student s
       ON a.student_id = s.id
+
     WHERE s.school_id = ?
       AND a.status = 'PRESENT'
       AND a.attendance_date = CURDATE()
   `, [schoolId]);
 
+
   const [absent] = await pool.query(`
     SELECT COUNT(*) AS absentToday
+
     FROM attendance a
+
     INNER JOIN student s
       ON a.student_id = s.id
+
     WHERE s.school_id = ?
       AND a.status = 'ABSENT'
       AND a.attendance_date = CURDATE()
   `, [schoolId]);
 
+
   const presentToday =
-    Number(present[0]?.presentToday || 0);
+    Number(
+      present[0]?.presentToday || 0
+    );
+
 
   const absentToday =
-    Number(absent[0]?.absentToday || 0);
+    Number(
+      absent[0]?.absentToday || 0
+    );
+
 
   const totalAttendance =
     presentToday + absentToday;
+
 
   const attendancePercentage =
     totalAttendance === 0
       ? 0
       : Number(
-          ((presentToday * 100) / totalAttendance).toFixed(2)
+          (
+            (presentToday * 100) /
+            totalAttendance
+          ).toFixed(2)
         );
 
-  const [todayCollection] = await pool.query(`
-    SELECT
-      COALESCE(SUM(amount_paid), 0) AS todayCollection
-    FROM student_fee_payments sfp
-    INNER JOIN student s
-      ON sfp.student_id = s.id
-    WHERE s.school_id = ?
-      AND DATE(sfp.payment_date) = CURDATE()
-  `, [schoolId]);
-
-  const [totalCollection] = await pool.query(`
-    SELECT
-      COALESCE(SUM(amount_paid), 0) AS totalCollection
-    FROM student_fee_payments sfp
-    INNER JOIN student s
-      ON sfp.student_id = s.id
-    WHERE s.school_id = ?
-  `, [schoolId]);
-
-  const [latestStudents] = await pool.query(`
-    SELECT
-      id,
-      full_name,
-      class_name,
-      section,
-      roll_number,
-      status,
-      created_at
-    FROM student
-    WHERE school_id = ?
-    ORDER BY id DESC
-    LIMIT 5
-  `, [schoolId]);
-
-  const [latestStaff] = await pool.query(`
-    SELECT
-      id,
-      full_name,
-      designation,
-      email,
-      phone,
-      status,
-      created_at
-    FROM staff
-    WHERE school_id = ?
-    ORDER BY id DESC
-    LIMIT 5
-  `, [schoolId]);
 
   // =======================================================
-// SCHOOL & BRANCH WISE DATA
-// =======================================================
+  // FEES
+  // =======================================================
 
-const [branchWiseData] = await pool.query(`
-  SELECT
-    sb.id AS branchId,
-    sb.branch_name AS branchName,
-    sb.branch_code AS branchCode,
-    sb.school_id AS schoolId,
-    s.school_name AS schoolName,
+  const [todayCollection] =
+    await pool.query(`
+      SELECT
+        COALESCE(
+          SUM(sfp.amount_paid),
+          0
+        ) AS todayCollection
 
-    (
-      SELECT COUNT(*)
-      FROM student st
-      WHERE st.school_id = sb.school_id
-    ) AS totalStudents,
+      FROM student_fee_payments sfp
 
-    (
-      SELECT COUNT(*)
-      FROM staff sf
-      WHERE sf.school_id = sb.school_id
-    ) AS totalStaff
+      INNER JOIN student s
+        ON sfp.student_id = s.id
 
-  FROM school_branches sb
-  INNER JOIN school s
-    ON s.id = sb.school_id
+      WHERE s.school_id = ?
+        AND DATE(
+          sfp.payment_date
+        ) = CURDATE()
+    `, [schoolId]);
 
-  WHERE LOWER(sb.status) = 'active'
 
-  ORDER BY s.school_name, sb.branch_name
-`);
+  const [totalCollection] =
+    await pool.query(`
+      SELECT
+        COALESCE(
+          SUM(sfp.amount_paid),
+          0
+        ) AS totalCollection
 
-// =======================================================
-// UPCOMING EVENTS
-// =======================================================
+      FROM student_fee_payments sfp
 
-const [upcomingEvents] = await pool.query(`
-  SELECT
-    e.id,
-    e.event_name,
-    e.event_type,
-    e.event_date,
-    e.start_time,
-    e.end_time,
-    e.venue,
-    e.organizer,
-    e.status,
+      INNER JOIN student s
+        ON sfp.student_id = s.id
 
-    s.school_name AS schoolName,
-    sb.branch_name AS branchName
+      WHERE s.school_id = ?
+    `, [schoolId]);
 
-  FROM events e
 
-  LEFT JOIN school s
-    ON s.id = e.school_id
+  const [feeStructures] =
+    await pool.query(`
+      SELECT COUNT(*) AS totalFeeStructures
+      FROM fee_structures
+    `);
 
-  LEFT JOIN school_branches sb
-    ON sb.id = e.branch_id
 
-  WHERE e.event_date >= CURDATE()
+  // =======================================================
+  // RECENT PAYMENTS
+  // =======================================================
 
-  ORDER BY e.event_date ASC, e.start_time ASC
+  const [recentPayments] =
+    await pool.query(`
+      SELECT
 
-  LIMIT 5
-`);
+        sfp.id,
+
+        sfp.student_id,
+
+        s.full_name AS student_name,
+
+        s.roll_number,
+
+        sfp.fee_structure_id,
+
+        fs.fee_type,
+
+        sfp.amount_paid,
+
+        sfp.payment_date,
+
+        sfp.payment_mode,
+
+        sfp.receipt_no,
+
+        sfp.remarks
+
+      FROM student_fee_payments sfp
+
+      INNER JOIN student s
+        ON s.id = sfp.student_id
+
+      LEFT JOIN fee_structures fs
+        ON fs.id = sfp.fee_structure_id
+
+      WHERE s.school_id = ?
+
+      ORDER BY sfp.id DESC
+
+      LIMIT 5
+    `, [schoolId]);
+
+
+  // =======================================================
+  // LATEST STUDENTS
+  // =======================================================
+
+  const [latestStudents] =
+    await pool.query(`
+      SELECT
+
+        s.id,
+
+        s.full_name,
+
+        s.roll_number,
+
+        s.status,
+
+        s.created_at,
+
+        c.class_name,
+
+        sec.section_name,
+
+        sb.branch_name
+
+      FROM student s
+
+      LEFT JOIN school_classes sc
+        ON s.school_class_id = sc.id
+
+      LEFT JOIN classes c
+        ON sc.class_id = c.id
+
+      LEFT JOIN sections sec
+        ON s.section_id = sec.id
+
+      LEFT JOIN school_branches sb
+        ON s.branch_id = sb.id
+
+      WHERE s.school_id = ?
+
+      ORDER BY s.id DESC
+
+      LIMIT 5
+    `, [schoolId]);
+
+
+  // =======================================================
+  // LATEST STAFF
+  // =======================================================
+
+  const [latestStaff] =
+    await pool.query(`
+      SELECT
+
+        id,
+
+        full_name,
+
+        designation,
+
+        email,
+
+        phone,
+
+        status,
+
+        created_at
+
+      FROM staff
+
+      WHERE school_id = ?
+
+      ORDER BY id DESC
+
+      LIMIT 5
+    `, [schoolId]);
+
+
+  // =======================================================
+  // ACTIVE / INACTIVE STUDENTS
+  // =======================================================
+
+  const [activeStudents] =
+    await pool.query(`
+      SELECT COUNT(*) AS count
+
+      FROM student
+
+      WHERE school_id = ?
+
+        AND LOWER(status) = 'active'
+    `, [schoolId]);
+
+
+  const [inactiveStudents] =
+    await pool.query(`
+      SELECT COUNT(*) AS count
+
+      FROM student
+
+      WHERE school_id = ?
+
+        AND LOWER(status) = 'inactive'
+    `, [schoolId]);
+
+
+  // =======================================================
+  // ACTIVE / INACTIVE STAFF
+  // =======================================================
+
+  const [activeStaff] =
+    await pool.query(`
+      SELECT COUNT(*) AS count
+
+      FROM staff
+
+      WHERE school_id = ?
+
+        AND LOWER(status) = 'active'
+    `, [schoolId]);
+
+
+  const [inactiveStaff] =
+    await pool.query(`
+      SELECT COUNT(*) AS count
+
+      FROM staff
+
+      WHERE school_id = ?
+
+        AND LOWER(status) = 'inactive'
+    `, [schoolId]);
+
+
+  // =======================================================
+  // SCHOOL & BRANCH WISE DATA
+  // =======================================================
+
+  const [branchWiseData] =
+    await pool.query(`
+      SELECT
+
+        sb.id AS branchId,
+
+        sb.branch_name AS branchName,
+
+        sb.branch_code AS branchCode,
+
+        sb.school_id AS schoolId,
+
+        s.school_name AS schoolName,
+
+        (
+          SELECT COUNT(*)
+
+          FROM student st
+
+          WHERE st.branch_id = sb.id
+        ) AS totalStudents,
+
+        (
+          SELECT COUNT(*)
+
+          FROM staff sf
+
+          WHERE sf.branch_id = sb.id
+        ) AS totalStaff
+
+      FROM school_branches sb
+
+      INNER JOIN school s
+        ON s.id = sb.school_id
+
+      WHERE sb.school_id = ?
+
+        AND LOWER(sb.status) = 'active'
+
+      ORDER BY
+        sb.branch_name
+    `, [schoolId]);
+
+
+  // =======================================================
+  // UPCOMING EVENTS
+  // =======================================================
+
+  const [upcomingEvents] =
+    await pool.query(`
+      SELECT
+
+        e.id,
+
+        e.event_name,
+
+        e.event_type,
+
+        e.event_date,
+
+        e.start_time,
+
+        e.end_time,
+
+        e.venue,
+
+        e.organizer,
+
+        e.status,
+
+        s.school_name AS schoolName,
+
+        sb.branch_name AS branchName
+
+      FROM events e
+
+      LEFT JOIN school s
+        ON s.id = e.school_id
+
+      LEFT JOIN school_branches sb
+        ON sb.id = e.branch_id
+
+      WHERE e.school_id = ?
+
+        AND e.event_date >= CURDATE()
+
+      ORDER BY
+        e.event_date ASC,
+        e.start_time ASC
+
+      LIMIT 5
+    `, [schoolId]);
+
+
+  // =======================================================
+  // RESULT
+  // =======================================================
 
   return {
 
     statistics: {
 
       totalBranches:
-        Number(branches[0]?.totalBranches || 0),
+        Number(
+          branches[0]?.totalBranches || 0
+        ),
 
       totalStaff:
-        Number(staff[0]?.totalStaff || 0),
+        Number(
+          staff[0]?.totalStaff || 0
+        ),
 
       totalStudents:
-        Number(students[0]?.totalStudents || 0),
+        Number(
+          students[0]?.totalStudents || 0
+        ),
 
       totalClasses:
-        Number(classes[0]?.totalClasses || 0),
+        Number(
+          classes[0]?.totalClasses || 0
+        ),
 
       totalSubjects:
-        Number(subjects[0]?.totalSubjects || 0),
+        Number(
+          subjects[0]?.totalSubjects || 0
+        ),
+
+      totalStaffTypes:
+        Number(
+          staffTypes[0]?.totalStaffTypes || 0
+        ),
+
+      totalDepartments:
+        Number(
+          departments[0]?.totalDepartments || 0
+        ),
 
       presentToday,
 
@@ -527,22 +811,54 @@ const [upcomingEvents] = await pool.query(`
       attendancePercentage,
 
       todayCollection:
-        Number(todayCollection[0]?.todayCollection || 0),
+        Number(
+          todayCollection[0]?.todayCollection || 0
+        ),
 
       totalCollection:
-        Number(totalCollection[0]?.totalCollection || 0)
+        Number(
+          totalCollection[0]?.totalCollection || 0
+        ),
+
+      totalFeeStructures:
+        Number(
+          feeStructures[0]?.totalFeeStructures || 0
+        ),
+
+      activeStudents:
+        Number(
+          activeStudents[0]?.count || 0
+        ),
+
+      inactiveStudents:
+        Number(
+          inactiveStudents[0]?.count || 0
+        ),
+
+      activeStaff:
+        Number(
+          activeStaff[0]?.count || 0
+        ),
+
+      inactiveStaff:
+        Number(
+          inactiveStaff[0]?.count || 0
+        )
+
     },
 
-  latestStudents,
+    latestStudents,
 
-latestStaff,
+    latestStaff,
 
-recentPayments,
+    recentPayments,
 
-branchWiseData,
+    branchWiseData,
 
-upcomingEvents
+    upcomingEvents
+
   };
+
 };
 
 
