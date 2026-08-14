@@ -88,9 +88,10 @@ const loginStaff = async (req, res) => {
       );
 
     return res.status(200).json({
-      success: true,
-      token
-    });
+  success: true,
+  token,
+  role: "STAFF"
+});
 
   } catch (error) {
 

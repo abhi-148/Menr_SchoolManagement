@@ -8,7 +8,12 @@ const pool = require("../config/db");
 const findSuperAdminByEmail = async (email) => {
 
   const [rows] = await pool.query(
-    "SELECT * FROM super_admin WHERE email = ?",
+    `
+    SELECT *
+    FROM super_admin
+    WHERE email = ?
+    LIMIT 1
+    `,
     [email]
   );
 
@@ -19,15 +24,17 @@ const findSuperAdminByEmail = async (email) => {
 const createSuperAdmin = async (data) => {
 
   const [result] = await pool.query(
-    `INSERT INTO super_admin
-      (
-        full_name,
-        email,
-        password,
-        status,
-        is_verified
-      )
-      VALUES (?, ?, ?, ?, ?)`,
+    `
+    INSERT INTO super_admin
+    (
+      full_name,
+      email,
+      password,
+      status,
+      is_verified
+    )
+    VALUES (?, ?, ?, ?, ?)
+    `,
     [
       data.full_name,
       data.email,
@@ -44,7 +51,12 @@ const createSuperAdmin = async (data) => {
 const loginSuperAdmin = async (email) => {
 
   const [rows] = await pool.query(
-    "SELECT * FROM super_admin WHERE email = ?",
+    `
+    SELECT *
+    FROM super_admin
+    WHERE email = ?
+    LIMIT 1
+    `,
     [email]
   );
 
@@ -55,7 +67,12 @@ const loginSuperAdmin = async (email) => {
 const findSuperAdminById = async (id) => {
 
   const [rows] = await pool.query(
-    "SELECT * FROM super_admin WHERE id = ?",
+    `
+    SELECT *
+    FROM super_admin
+    WHERE id = ?
+    LIMIT 1
+    `,
     [id]
   );
 
@@ -69,9 +86,11 @@ const updateSuperAdminPassword = async (
 ) => {
 
   const [result] = await pool.query(
-    `UPDATE super_admin
-     SET password = ?
-     WHERE id = ?`,
+    `
+    UPDATE super_admin
+    SET password = ?
+    WHERE id = ?
+    `,
     [
       password,
       id
@@ -89,10 +108,13 @@ const updateSuperAdminProfile = async (
 ) => {
 
   const [result] = await pool.query(
-    `UPDATE super_admin
-     SET full_name = ?,
-         email = ?
-     WHERE id = ?`,
+    `
+    UPDATE super_admin
+    SET
+      full_name = ?,
+      email = ?
+    WHERE id = ?
+    `,
     [
       full_name,
       email,
@@ -108,24 +130,23 @@ const updateSuperAdminProfile = async (
 // EMAIL VERIFICATION
 // =========================================================
 
-// Mark Super Admin email as verified
-
 const verifySuperAdminEmail = async (userId) => {
 
   const [result] = await pool.query(
-    `UPDATE super_admin
-     SET is_verified = 1,
-         verification_otp = NULL,
-         otp_expires_at = NULL
-     WHERE id = ?`,
+    `
+    UPDATE super_admin
+    SET
+      is_verified = 1,
+      verification_otp = NULL,
+      otp_expires_at = NULL
+    WHERE id = ?
+    `,
     [userId]
   );
 
   return result;
 };
 
-
-// Save OTP directly in super_admin table
 
 const saveSuperAdminVerificationOtp = async (
   userId,
@@ -134,10 +155,13 @@ const saveSuperAdminVerificationOtp = async (
 ) => {
 
   const [result] = await pool.query(
-    `UPDATE super_admin
-     SET verification_otp = ?,
-         otp_expires_at = ?
-     WHERE id = ?`,
+    `
+    UPDATE super_admin
+    SET
+      verification_otp = ?,
+      otp_expires_at = ?
+    WHERE id = ?
+    `,
     [
       otp,
       expiresAt,
@@ -149,22 +173,23 @@ const saveSuperAdminVerificationOtp = async (
 };
 
 
-// Get user for OTP verification
-
 const findSuperAdminByIdForVerification = async (
   userId
 ) => {
 
   const [rows] = await pool.query(
-    `SELECT
+    `
+    SELECT
       id,
       full_name,
       email,
       is_verified,
       verification_otp,
       otp_expires_at
-     FROM super_admin
-     WHERE id = ?`,
+    FROM super_admin
+    WHERE id = ?
+    LIMIT 1
+    `,
     [userId]
   );
 
@@ -176,8 +201,6 @@ const findSuperAdminByIdForVerification = async (
 // EMAIL VERIFICATION TOKEN TABLE
 // =========================================================
 
-// Save OTP in email_verification_tokens table
-
 const createEmailVerificationToken = async (
   userId,
   email,
@@ -185,25 +208,27 @@ const createEmailVerificationToken = async (
   expiresAt
 ) => {
 
-  // Remove old OTPs for this user first
-
   await pool.query(
-    `DELETE FROM email_verification_tokens
-     WHERE user_id = ?`,
+    `
+    DELETE FROM email_verification_tokens
+    WHERE user_id = ?
+    `,
     [userId]
   );
 
 
   const [result] = await pool.query(
-    `INSERT INTO email_verification_tokens
-      (
-        user_id,
-        email,
-        otp_hash,
-        expires_at,
-        attempts
-      )
-      VALUES (?, ?, ?, ?, 0)`,
+    `
+    INSERT INTO email_verification_tokens
+    (
+      user_id,
+      email,
+      otp_hash,
+      expires_at,
+      attempts
+    )
+    VALUES (?, ?, ?, ?, 0)
+    `,
     [
       userId,
       email,
@@ -216,20 +241,20 @@ const createEmailVerificationToken = async (
 };
 
 
-// Find OTP record
-
 const findEmailVerificationToken = async (
   userId,
   email
 ) => {
 
   const [rows] = await pool.query(
-    `SELECT *
-     FROM email_verification_tokens
-     WHERE user_id = ?
-       AND email = ?
-     ORDER BY id DESC
-     LIMIT 1`,
+    `
+    SELECT *
+    FROM email_verification_tokens
+    WHERE user_id = ?
+      AND email = ?
+    ORDER BY id DESC
+    LIMIT 1
+    `,
     [
       userId,
       email
@@ -240,16 +265,16 @@ const findEmailVerificationToken = async (
 };
 
 
-// Update OTP attempts
-
 const incrementVerificationAttempts = async (
   tokenId
 ) => {
 
   const [result] = await pool.query(
-    `UPDATE email_verification_tokens
-     SET attempts = attempts + 1
-     WHERE id = ?`,
+    `
+    UPDATE email_verification_tokens
+    SET attempts = attempts + 1
+    WHERE id = ?
+    `,
     [tokenId]
   );
 
@@ -257,15 +282,15 @@ const incrementVerificationAttempts = async (
 };
 
 
-// Delete OTP after successful verification
-
 const deleteEmailVerificationToken = async (
   tokenId
 ) => {
 
   const [result] = await pool.query(
-    `DELETE FROM email_verification_tokens
-     WHERE id = ?`,
+    `
+    DELETE FROM email_verification_tokens
+    WHERE id = ?
+    `,
     [tokenId]
   );
 
@@ -278,20 +303,42 @@ const deleteEmailVerificationToken = async (
 // =========================================================
 
 const saveResetToken = async (
+  userType,
+  userId,
   email,
   token,
   expiresAt
 ) => {
 
-  const [result] = await pool.query(
-    `INSERT INTO password_reset_tokens
-      (
-        email,
-        token,
-        expires_at
-      )
-      VALUES (?, ?, ?)`,
+  // Remove previous active tokens for this user
+  await pool.query(
+    `
+    DELETE FROM password_reset_tokens
+    WHERE user_type = ?
+      AND user_id = ?
+    `,
     [
+      userType,
+      userId
+    ]
+  );
+
+
+  const [result] = await pool.query(
+    `
+    INSERT INTO password_reset_tokens
+    (
+      user_type,
+      user_id,
+      email,
+      token,
+      expires_at
+    )
+    VALUES (?, ?, ?, ?, ?)
+    `,
+    [
+      userType,
+      userId,
       email,
       token,
       expiresAt
@@ -302,12 +349,23 @@ const saveResetToken = async (
 };
 
 
-const findResetToken = async (token) => {
+const findResetToken = async (
+  token
+) => {
 
   const [rows] = await pool.query(
-    `SELECT *
-     FROM password_reset_tokens
-     WHERE token = ?`,
+    `
+    SELECT
+      id,
+      user_type,
+      user_id,
+      email,
+      token,
+      expires_at
+    FROM password_reset_tokens
+    WHERE token = ?
+    LIMIT 1
+    `,
     [token]
   );
 
@@ -315,12 +373,15 @@ const findResetToken = async (token) => {
 };
 
 
-const deleteResetToken = async (token) => {
+const deleteResetToken = async (
+  token
+) => {
 
   const [result] = await pool.query(
-    `DELETE
-     FROM password_reset_tokens
-     WHERE token = ?`,
+    `
+    DELETE FROM password_reset_tokens
+    WHERE token = ?
+    `,
     [token]
   );
 
@@ -335,18 +396,45 @@ const deleteResetToken = async (token) => {
 const findSchoolAdminByEmail = async (email) => {
 
   const [rows] = await pool.query(
-    `SELECT
+    `
+    SELECT
       s.id,
       s.school_name,
       s.admin_email,
       s.admin_password
-     FROM school s
-     WHERE s.admin_email = ?
-     LIMIT 1`,
+    FROM school s
+    WHERE s.admin_email = ?
+    LIMIT 1
+    `,
     [email]
   );
 
   return rows[0];
+};
+
+
+// =========================================================
+// UPDATE SCHOOL ADMIN PASSWORD
+// =========================================================
+
+const updateSchoolAdminPassword = async (
+  schoolId,
+  password
+) => {
+
+  const [result] = await pool.query(
+    `
+    UPDATE school
+    SET admin_password = ?
+    WHERE id = ?
+    `,
+    [
+      password,
+      schoolId
+    ]
+  );
+
+  return result;
 };
 
 
@@ -381,6 +469,7 @@ module.exports = {
   deleteResetToken,
 
   // School Admin
-  findSchoolAdminByEmail
+  findSchoolAdminByEmail,
+  updateSchoolAdminPassword,
 
 };

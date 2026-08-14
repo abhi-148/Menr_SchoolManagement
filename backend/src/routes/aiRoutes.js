@@ -1,8 +1,9 @@
 const express =
-require("express");
+  require("express");
 
 const router =
-express.Router();
+  express.Router();
+
 
 const {
   askAI
@@ -10,10 +11,32 @@ const {
   "../controllers/aiController"
 );
 
+
+const authMiddleware =
+  require(
+    "../middlewares/authMiddleware"
+  );
+
+
+const authorizeRoles =
+  require(
+    "../middlewares/roleMiddleware"
+  );
+
+
 router.post(
   "/chat",
+
+  authMiddleware,
+
+  authorizeRoles(
+    "SUPER_ADMIN",
+    "SCHOOL_ADMIN"
+  ),
+
   askAI
 );
 
+
 module.exports =
-router;
+  router;

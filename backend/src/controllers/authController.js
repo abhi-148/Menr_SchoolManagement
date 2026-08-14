@@ -1,5 +1,5 @@
 const {
-  loginSuperAdminService,
+  loginAnyUserService,
   changePasswordService,
   getProfileService,
   updateProfileService,
@@ -13,9 +13,16 @@ const {
 
 // =========================================================
 // LOGIN
+// SUPER_ADMIN
+// SCHOOL_ADMIN
+// STAFF
+// STUDENT
 // =========================================================
 
-const login = async (req, res) => {
+const login = async (
+  req,
+  res
+) => {
 
   try {
 
@@ -26,7 +33,7 @@ const login = async (req, res) => {
 
 
     const result =
-      await loginSuperAdminService(
+      await loginAnyUserService(
         email,
         password
       );
@@ -40,15 +47,18 @@ const login = async (req, res) => {
         result.token,
 
       role:
-        result.role
+        result.role,
+
+      schoolId:
+        result.schoolId ?? null
 
     });
 
   } catch (error) {
 
     console.error(
-      "Login Error:",
-      error
+      "LOGIN ERROR:",
+      error.message
     );
 
 
@@ -70,7 +80,10 @@ const login = async (req, res) => {
 // SIGNUP
 // =========================================================
 
-const signup = async (req, res) => {
+const signup = async (
+  req,
+  res
+) => {
 
   try {
 
@@ -114,8 +127,8 @@ const signup = async (req, res) => {
   } catch (error) {
 
     console.error(
-      "Signup Error:",
-      error
+      "SIGNUP ERROR:",
+      error.message
     );
 
 
@@ -137,7 +150,10 @@ const signup = async (req, res) => {
 // VERIFY EMAIL OTP
 // =========================================================
 
-const verifyEmail = async (req, res) => {
+const verifyEmail = async (
+  req,
+  res
+) => {
 
   try {
 
@@ -175,8 +191,8 @@ const verifyEmail = async (req, res) => {
   } catch (error) {
 
     console.error(
-      "Email Verification Error:",
-      error
+      "EMAIL VERIFICATION ERROR:",
+      error.message
     );
 
 
@@ -228,8 +244,8 @@ const resendVerificationOtp = async (
   } catch (error) {
 
     console.error(
-      "Resend OTP Error:",
-      error
+      "RESEND OTP ERROR:",
+      error.message
     );
 
 
@@ -249,6 +265,7 @@ const resendVerificationOtp = async (
 
 // =========================================================
 // CHANGE PASSWORD
+// SUPER ADMIN
 // =========================================================
 
 const changePassword = async (
@@ -299,182 +316,194 @@ const changePassword = async (
 
 // =========================================================
 // GET PROFILE
+// SUPER ADMIN
 // =========================================================
 
-const getProfile =
-  async (req, res) => {
+const getProfile = async (
+  req,
+  res
+) => {
 
-    try {
+  try {
 
-      const profile =
-        await getProfileService(
-          req.user.id
-        );
+    const profile =
+      await getProfileService(
+        req.user.id
+      );
 
 
-      return res.status(200).json({
+    return res.status(200).json({
 
-        success: true,
+      success: true,
 
-        data:
-          profile
+      data:
+        profile
 
-      });
+    });
 
-    } catch (error) {
+  } catch (error) {
 
-      return res.status(400).json({
+    return res.status(400).json({
 
-        success: false,
+      success: false,
 
-        message:
-          error.message
+      message:
+        error.message
 
-      });
+    });
 
-    }
+  }
 
-  };
+};
 
 
 // =========================================================
 // UPDATE PROFILE
+// SUPER ADMIN
 // =========================================================
 
-const updateProfile =
-  async (req, res) => {
+const updateProfile = async (
+  req,
+  res
+) => {
 
-    try {
+  try {
 
-      const {
+    const {
+      full_name,
+      email
+    } = req.body;
+
+
+    const result =
+      await updateProfileService(
+        req.user.id,
         full_name,
         email
-      } = req.body;
+      );
 
 
-      const result =
-        await updateProfileService(
-          req.user.id,
-          full_name,
-          email
-        );
+    return res.status(200).json({
 
+      success: true,
 
-      return res.status(200).json({
+      data:
+        result
 
-        success: true,
+    });
 
-        data:
-          result
+  } catch (error) {
 
-      });
+    return res.status(400).json({
 
-    } catch (error) {
+      success: false,
 
-      return res.status(400).json({
+      message:
+        error.message
 
-        success: false,
+    });
 
-        message:
-          error.message
+  }
 
-      });
-
-    }
-
-  };
+};
 
 
 // =========================================================
 // FORGOT PASSWORD
+// ALL ROLES
 // =========================================================
 
-const forgotPassword =
-  async (req, res) => {
+const forgotPassword = async (
+  req,
+  res
+) => {
 
-    try {
+  try {
 
-      const {
+    const {
+      email
+    } = req.body;
+
+
+    const result =
+      await forgotPasswordService(
         email
-      } = req.body;
+      );
 
 
-      const result =
-        await forgotPasswordService(
-          email
-        );
+    return res.status(200).json({
 
+      success: true,
 
-      return res.status(200).json({
+      data:
+        result
 
-        success: true,
+    });
 
-        data:
-          result
+  } catch (error) {
 
-      });
+    return res.status(400).json({
 
-    } catch (error) {
+      success: false,
 
-      return res.status(400).json({
+      message:
+        error.message
 
-        success: false,
+    });
 
-        message:
-          error.message
+  }
 
-      });
-
-    }
-
-  };
+};
 
 
 // =========================================================
 // RESET PASSWORD
+// ALL ROLES
 // =========================================================
 
-const resetPassword =
-  async (req, res) => {
+const resetPassword = async (
+  req,
+  res
+) => {
 
-    try {
+  try {
 
-      const {
+    const {
+      token,
+      password
+    } = req.body;
+
+
+    const result =
+      await resetPasswordService(
         token,
         password
-      } = req.body;
+      );
 
 
-      const result =
-        await resetPasswordService(
-          token,
-          password
-        );
+    return res.status(200).json({
 
+      success: true,
 
-      return res.status(200).json({
+      data:
+        result
 
-        success: true,
+    });
 
-        data:
-          result
+  } catch (error) {
 
-      });
+    return res.status(400).json({
 
-    } catch (error) {
+      success: false,
 
-      return res.status(400).json({
+      message:
+        error.message
 
-        success: false,
+    });
 
-        message:
-          error.message
+  }
 
-      });
-
-    }
-
-  };
+};
 
 
 // =========================================================

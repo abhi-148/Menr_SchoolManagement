@@ -130,14 +130,17 @@ const loginStaffService = async (
   password
 ) => {
 
+  const normalizedEmail =
+    email.trim().toLowerCase();
+
   const staff =
     await findStaffByEmail(
-      email
+      normalizedEmail
     );
 
   if (!staff) {
     throw new Error(
-      "Invalid Email"
+      "Invalid Email or Password"
     );
   }
 
@@ -149,17 +152,15 @@ const loginStaffService = async (
 
   if (!isMatch) {
     throw new Error(
-      "Invalid Password"
+      "Invalid Email or Password"
     );
   }
 
   const token = jwt.sign(
     {
       id: staff.id,
-      schoolId:
-        staff.school_id,
-      role:
-        staff.role
+      schoolId: staff.school_id,
+      role: "STAFF"
     },
     process.env.JWT_SECRET,
     {

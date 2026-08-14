@@ -204,6 +204,9 @@ const leaveRequestRoutes = require(
   "./src/routes/leaveRequestRoutes"
 );
 
+const announcementRoutes =
+  require("./src/routes/announcementRoutes");
+
 // Health Check
 app.get("/", (req, res) => {
   res.status(200).json({
@@ -437,6 +440,11 @@ app.use(
 app.use(
   "/api/achievements",
   achievementRoutes
+);
+
+app.use(
+  "/api/announcements",
+  announcementRoutes
 );
 
 app.use(

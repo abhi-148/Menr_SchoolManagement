@@ -1,82 +1,255 @@
 import {
   BrowserRouter,
   Routes,
-  Route
+  Route,
+  Navigate
 } from "react-router-dom";
+
+import { useContext } from "react";
+
+import {
+  AuthContext
+} from "../context/AuthContext";
+
+
+// =========================================================
+// PUBLIC PAGES
+// =========================================================
 
 import Welcome from "../pages/Welcome/Welcome";
 import Login from "../pages/Auth/Login";
 import ForgotPassword from "../pages/Auth/ForgotPassword";
 import ResetPassword from "../pages/Auth/ResetPassword";
 
+
+// =========================================================
+// MAIN
+// =========================================================
+
 import Dashboard from "../pages/Dashboard/Dashboard";
+import Profile from "../pages/Profile/Profile";
+
+
+// =========================================================
+// SCHOOL MANAGEMENT
+// =========================================================
+
 import Schools from "../pages/Schools/Schools";
+import SchoolBranches from "../pages/SchoolBranches/SchoolBranches";
+import SchoolClasses from "../pages/SchoolClasses/SchoolClasses";
+import MasterMediumPage from "../pages/mediums/MasterMediumPage";
+import SchoolMediumPage from "../pages/mediums/SchoolMediumPage";
+
+import Batch from "../pages/Batch/Batch";
+import AddBatch from "../pages/Batch/AddBatch";
+import EditBatch from "../pages/Batch/EditBatch";
+import ViewBatch from "../pages/Batch/ViewBatch";
+
+import SchoolPeriod from "../pages/SchoolPeriod/SchoolPeriod";
+import AddSchoolPeriod from "../pages/SchoolPeriod/AddSchoolPeriod";
+import EditSchoolPeriod from "../pages/SchoolPeriod/EditSchoolPeriod";
+import ViewSchoolPeriod from "../pages/SchoolPeriod/ViewSchoolPeriod";
+
+import AcademicYears from "../pages/academicYears/AcademicYears";
+import AcademicYearSessions from "../pages/academicYears/AcademicYearSessions";
+import Branches from "../pages/branches/Branches";
+
+
+// =========================================================
+// STAFF / PEOPLE
+// =========================================================
+
 import Staff from "../pages/Staff/Staff";
 import StaffType from "../pages/StaffType/StaffType";
 import StaffDepartment from "../pages/StaffDepartment/StaffDepartment";
 import Students from "../pages/Students/Students";
+
 import StaffSchedule from "../pages/StaffSchedule/StaffSchedule";
 import StaffAttendance from "../pages/StaffAttendance/StaffAttendance";
 import LeaveRequest from "../pages/LeaveRequest/LeaveRequest";
+
+
+// =========================================================
+// ATTENDANCE
+// =========================================================
+
 import Attendance from "../pages/Attendance/Attendance";
+
+
+// =========================================================
+// FINANCE
+// =========================================================
+
 import Fees from "../pages/Fees/Fees";
-import Profile from "../pages/Profile/Profile";
-import AIAssistant from "../pages/AI/AIAssistant";
 import FeeStructure from "../pages/FeeStructure/FeeStructure";
 import StudentFeeCollection from "../pages/StudentFeeCollection/StudentFeeCollection";
 import FeeStructureComponents from "../pages/FeeStructureComponents/FeeStructureComponents";
 import FeeInstallments from "../pages/FeeInstallments/FeeInstallments";
 import FeeDiscounts from "../pages/FeeDiscounts/FeeDiscounts";
 import FeeConcessions from "../pages/FeeConcessions/FeeConcessions";
-import Exams from "../pages/Exams/Exams";
-import StudentMarks from "../pages/StudentMarks/StudentMarks";
-import Timetable from "../pages/Timetable/Timetable";
-import ReportCard from "../pages/ReportCard/ReportCard";
-import Classes from "../pages/Classes/Classes";
-import SchoolBranches from "../pages/SchoolBranches/SchoolBranches";
-import SchoolClasses from "../pages/SchoolClasses/SchoolClasses";
-import MasterMediumPage from "../pages/mediums/MasterMediumPage";
-import SchoolMediumPage from "../pages/mediums/SchoolMediumPage";
-import Batch from "../pages/Batch/Batch";
-import AddBatch from "../pages/Batch/AddBatch";
-import EditBatch from "../pages/Batch/EditBatch";
-import ViewBatch from "../pages/Batch/ViewBatch";
-import ExamTimetable from "../pages/ExamTimetable/ExamTimetable";
-import AddExamTimetable from "../pages/ExamTimetable/AddExamTimetable";
-import EditExamTimetable from "../pages/ExamTimetable/EditExamTimetable";
-import ViewExamTimetable from "../pages/ExamTimetable/ViewExamTimetable";
-import SchoolPeriod from "../pages/SchoolPeriod/SchoolPeriod";
-import AddSchoolPeriod from "../pages/SchoolPeriod/AddSchoolPeriod";
-import EditSchoolPeriod from "../pages/SchoolPeriod/EditSchoolPeriod";
-import ViewSchoolPeriod from "../pages/SchoolPeriod/ViewSchoolPeriod";
-import AddTimetable from "../pages/Timetable/AddTimetable";
-import EditTimetable from "../pages/Timetable/EditTimetable";
-import ViewTimetable from "../pages/Timetable/ViewTimetable";
-import TimeTableSubstitution from "../pages/TimeTableSubstitution/TimeTableSubstitution";
-import AddTimeTableSubstitution from "../pages/TimeTableSubstitution/AddTimeTableSubstitution";
-import EditTimeTableSubstitution from "../pages/TimeTableSubstitution/EditTimeTableSubstitution";
-import ViewTimeTableSubstitution from "../pages/TimeTableSubstitution/ViewTimeTableSubstitution";
-import SchoolTransfer from "../pages/SchoolTransfer/SchoolTransfer";
-import BranchTransfer from "../pages/BranchTransfer/BranchTransfer";
 import LibraryFinePayment from "../pages/LibraryFinePayment/LibraryFinePayment";
 import AddLibraryFinePayment from "../pages/LibraryFinePayment/AddLibraryFinePayment";
 import EditLibraryFinePayment from "../pages/LibraryFinePayment/EditLibraryFinePayment";
 import ViewLibraryFinePayment from "../pages/LibraryFinePayment/ViewLibraryFinePayment";
+
+
+// =========================================================
+// ACADEMICS
+// =========================================================
+
+import Exams from "../pages/Exams/Exams";
+import StudentMarks from "../pages/StudentMarks/StudentMarks";
+import Timetable from "../pages/Timetable/Timetable";
+import AddTimetable from "../pages/Timetable/AddTimetable";
+import EditTimetable from "../pages/Timetable/EditTimetable";
+import ViewTimetable from "../pages/Timetable/ViewTimetable";
+import ReportCard from "../pages/ReportCard/ReportCard";
+import Classes from "../pages/Classes/Classes";
+
+import ExamTimetable from "../pages/ExamTimetable/ExamTimetable";
+import AddExamTimetable from "../pages/ExamTimetable/AddExamTimetable";
+import EditExamTimetable from "../pages/ExamTimetable/EditExamTimetable";
+import ViewExamTimetable from "../pages/ExamTimetable/ViewExamTimetable";
+
+import TimeTableSubstitution from "../pages/TimeTableSubstitution/TimeTableSubstitution";
+import AddTimeTableSubstitution from "../pages/TimeTableSubstitution/AddTimeTableSubstitution";
+import EditTimeTableSubstitution from "../pages/TimeTableSubstitution/EditTimeTableSubstitution";
+import ViewTimeTableSubstitution from "../pages/TimeTableSubstitution/ViewTimeTableSubstitution";
+
+
+// =========================================================
+// TRANSFERS / OPERATIONS
+// =========================================================
+
+import SchoolTransfer from "../pages/SchoolTransfer/SchoolTransfer";
+import BranchTransfer from "../pages/BranchTransfer/BranchTransfer";
+
 import LostAndFound from "../pages/LostAndFound/LostAndFound";
 import AddLostAndFound from "../pages/LostAndFound/AddLostAndFound";
 import EditLostAndFound from "../pages/LostAndFound/EditLostAndFound";
 import ViewLostAndFound from "../pages/LostAndFound/ViewLostAndFound";
-import AcademicYears from "../pages/academicYears/AcademicYears";
+
 import AdmissionInquiry from "../pages/admissionInquiry/AdmissionInquiry";
 import AdmissionFollowUp from "../pages/admissionFollowUp/AdmissionFollowUp";
 import Achievement from "../pages/achievement/Achievement";
+
+
+// =========================================================
+// EVENTS
+// =========================================================
+
 import Events from "../pages/events/Events";
 import EventRegistrations from "../pages/EventRegistration/EventRegistrations";
 import EventPayments from "../pages/EventPayments/EventPayments";
-import Branches from "../pages/branches/Branches";
-import AcademicYearSessions from "../pages/academicYears/AcademicYearSessions";
 
-import PrivateRoute from "./PrivateRoute";
+
+// =========================================================
+// AI
+// =========================================================
+
+import AIAssistant from "../pages/AI/AIAssistant";
+
+
+// =========================================================
+// ANNOUNCEMENTS
+// =========================================================
+
+import Announcement from "../pages/Announcements/Announcement";
+
+
+// =========================================================
+// ROLE ROUTE
+// =========================================================
+
+const RoleRoute = ({
+  children,
+  allowedRoles
+}) => {
+
+  const {
+    isAuthenticated,
+    authLoading,
+    role
+  } = useContext(AuthContext);
+
+
+  // Auth restore hone tak wait
+  if (authLoading) {
+
+    return (
+      <div className="
+        min-h-screen
+        flex
+        items-center
+        justify-center
+        bg-slate-100
+      ">
+
+        <div className="
+          text-center
+          text-slate-600
+        ">
+
+          <div className="
+            w-10
+            h-10
+            border-4
+            border-blue-200
+            border-t-blue-600
+            rounded-full
+            animate-spin
+            mx-auto
+          " />
+
+          <p className="mt-3 text-sm">
+            Loading...
+          </p>
+
+        </div>
+
+      </div>
+    );
+
+  }
+
+
+  // Login required
+  if (!isAuthenticated) {
+
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
+
+  }
+
+
+  // Role required
+  if (
+    allowedRoles &&
+    !allowedRoles.includes(role)
+  ) {
+
+    return (
+      <Navigate
+        to="/dashboard"
+        replace
+      />
+    );
+
+  }
+
+
+  return children;
+
+};
+
+
+// =========================================================
+// APP ROUTES
+// =========================================================
 
 function AppRoutes() {
 
@@ -86,612 +259,1058 @@ function AppRoutes() {
 
       <Routes>
 
-        {/* Public Routes */}
+
+        {/* =================================================
+            PUBLIC ROUTES
+        ================================================= */}
 
         <Route
           path="/"
-          element={<Welcome />}
-        />
-
-        <Route
-          path="/login"
-          element={<Login />}
-        />
-
-        <Route
-          path="/forgot-password"
-          element={<ForgotPassword />}
-        />
-
-        <Route
-          path="/reset-password"
-          element={<ResetPassword />}
-        />
-
-        {/* Protected Routes */}
-
-        <Route
-          path="/dashboard"
           element={
-            <PrivateRoute>
-              <Dashboard />
-            </PrivateRoute>
+            <Welcome />
           }
         />
 
         <Route
+          path="/login"
+          element={
+            <Login />
+          }
+        />
+
+        <Route
+          path="/forgot-password"
+          element={
+            <ForgotPassword />
+          }
+        />
+
+        <Route
+          path="/reset-password"
+          element={
+            <ResetPassword />
+          }
+        />
+
+
+        {/* =================================================
+            ALL AUTHENTICATED USERS
+        ================================================= */}
+
+        <Route
+          path="/dashboard"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN",
+                "STAFF",
+                "STUDENT"
+              ]}
+            >
+              <Dashboard />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/profile"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN",
+                "STAFF",
+                "STUDENT"
+              ]}
+            >
+              <Profile />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/announcements"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN",
+                "STAFF",
+                "STUDENT"
+              ]}
+            >
+              <Announcement />
+            </RoleRoute>
+          }
+        />
+
+
+        {/* =================================================
+            SUPER ADMIN + SCHOOL ADMIN
+        ================================================= */}
+
+        <Route
           path="/schools"
           element={
-            <PrivateRoute>
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN"
+              ]}
+            >
               <Schools />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
 
         <Route
           path="/staff"
           element={
-            <PrivateRoute>
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
               <Staff />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
 
         <Route
           path="/staff-types"
           element={
-            <PrivateRoute>
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN"
+              ]}
+            >
               <StaffType />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
 
         <Route
           path="/departments"
           element={
-            <PrivateRoute>
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN"
+              ]}
+            >
               <StaffDepartment />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
 
         <Route
-  path="/staff-schedules"
-  element={
-    <PrivateRoute>
-      <StaffSchedule />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/staff-attendance"
-  element={
-    <PrivateRoute>
-      <StaffAttendance />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/leave-requests"
-  element={
-    <PrivateRoute>
-      <LeaveRequest />
-    </PrivateRoute>
-  }
-/>
-
-        <Route
           path="/students"
           element={
-            <PrivateRoute>
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
               <Students />
-            </PrivateRoute>
+            </RoleRoute>
+          }
+        />
+
+
+        {/* =================================================
+            STAFF WORK
+        ================================================= */}
+
+        <Route
+          path="/staff-schedules"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN",
+                "STAFF"
+              ]}
+            >
+              <StaffSchedule />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/staff-attendance"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN",
+                "STAFF"
+              ]}
+            >
+              <StaffAttendance />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/leave-requests"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN",
+                "STAFF"
+              ]}
+            >
+              <LeaveRequest />
+            </RoleRoute>
           }
         />
 
         <Route
           path="/attendance"
           element={
-            <PrivateRoute>
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN",
+                "STAFF"
+              ]}
+            >
               <Attendance />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
+
+
+        {/* =================================================
+            SCHOOL MANAGEMENT
+        ================================================= */}
+
+        <Route
+          path="/school-branches"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <SchoolBranches />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/school-classes"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <SchoolClasses />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/school-periods"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <SchoolPeriod />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/school-periods/add"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <AddSchoolPeriod />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/school-periods/edit/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <EditSchoolPeriod />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/school-periods/view/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <ViewSchoolPeriod />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/master-mediums"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN"
+              ]}
+            >
+              <MasterMediumPage />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/school-mediums"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <SchoolMediumPage />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/batches"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <Batch />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/batches/add"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <AddBatch />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/batches/edit/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <EditBatch />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/batches/view/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <ViewBatch />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/academic-years"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <AcademicYears />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/academic-year-sessions"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <AcademicYearSessions />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/branches"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN"
+              ]}
+            >
+              <Branches />
+            </RoleRoute>
+          }
+        />
+
+
+        {/* =================================================
+            ACADEMICS - ADMIN
+        ================================================= */}
+
+        <Route
+          path="/classes"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <Classes />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/exams"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <Exams />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/student-marks"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <StudentMarks />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/report-card"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <ReportCard />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/timetable"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <Timetable />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/timetable/add"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <AddTimetable />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/timetable/edit/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <EditTimetable />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/timetable/view/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <ViewTimetable />
+            </RoleRoute>
+          }
+        />
+
+
+        {/* =================================================
+            EXAM TIMETABLE
+        ================================================= */}
+
+        <Route
+          path="/exam-timetable"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <ExamTimetable />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/exam-timetable/add"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <AddExamTimetable />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/exam-timetable/edit/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <EditExamTimetable />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/exam-timetable/view/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <ViewExamTimetable />
+            </RoleRoute>
+          }
+        />
+
+
+        {/* =================================================
+            TIMETABLE SUBSTITUTION
+        ================================================= */}
+
+        <Route
+          path="/timetable-substitutions"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <TimeTableSubstitution />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/timetable-substitutions/add"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <AddTimeTableSubstitution />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/timetable-substitutions/edit/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <EditTimeTableSubstitution />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/timetable-substitutions/view/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <ViewTimeTableSubstitution />
+            </RoleRoute>
+          }
+        />
+
+
+        {/* =================================================
+            FINANCE - ADMIN
+        ================================================= */}
 
         <Route
           path="/fees"
           element={
-            <PrivateRoute>
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
               <Fees />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
 
         <Route
-  path="/library-fine-payments"
-  element={
-    <PrivateRoute>
-      <LibraryFinePayment />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/library-fine-payments/add"
-  element={
-    <PrivateRoute>
-      <AddLibraryFinePayment />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/library-fine-payments/edit/:id"
-  element={
-    <PrivateRoute>
-      <EditLibraryFinePayment />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/library-fine-payments/view/:id"
-  element={
-    <PrivateRoute>
-      <ViewLibraryFinePayment />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/lost-and-found"
-  element={
-    <PrivateRoute>
-      <LostAndFound />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/lost-and-found/add"
-  element={
-    <PrivateRoute>
-      <AddLostAndFound />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/lost-and-found/edit/:id"
-  element={
-    <PrivateRoute>
-      <EditLostAndFound />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/lost-and-found/view/:id"
-  element={
-    <PrivateRoute>
-      <ViewLostAndFound />
-    </PrivateRoute>
-  }
-/>
-
-        <Route
-          path="/profile"
+          path="/fee-structure"
           element={
-            <PrivateRoute>
-              <Profile />
-            </PrivateRoute>
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <FeeStructure />
+            </RoleRoute>
           }
         />
+
         <Route
-  path="/fee-structure"
-  element={
-    <PrivateRoute>
-      <FeeStructure />
-    </PrivateRoute>
-  }
-/>
+          path="/fee-structure-components"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <FeeStructureComponents />
+            </RoleRoute>
+          }
+        />
 
-<Route
-  path="/fee-structure-components"
-  element={
-    <PrivateRoute>
-      <FeeStructureComponents />
-    </PrivateRoute>
-  }
-/>
+        <Route
+          path="/fee-installments"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <FeeInstallments />
+            </RoleRoute>
+          }
+        />
 
-<Route
-  path="/fee-installments"
-  element={
-    <PrivateRoute>
-      <FeeInstallments />
-    </PrivateRoute>
-  }
-/>
+        <Route
+          path="/fee-discounts"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <FeeDiscounts />
+            </RoleRoute>
+          }
+        />
 
-<Route
-  path="/fee-discounts"
-  element={<FeeDiscounts />}
-/>
+        <Route
+          path="/fee-concessions"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <FeeConcessions />
+            </RoleRoute>
+          }
+        />
 
-<Route
-  path="/fee-concessions"
-  element={<FeeConcessions />}
-/>
+        <Route
+          path="/student-fees"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <StudentFeeCollection />
+            </RoleRoute>
+          }
+        />
 
-<Route
-  path="/student-fees"
-  element={
-    <PrivateRoute>
-      <StudentFeeCollection />
-    </PrivateRoute>
-  }
-/>
+        <Route
+          path="/library-fine-payments"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <LibraryFinePayment />
+            </RoleRoute>
+          }
+        />
 
-<Route
-  path="/exams"
-  element={
-    <PrivateRoute>
-      <Exams />
-    </PrivateRoute>
-  }
-/>
+        <Route
+          path="/library-fine-payments/add"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <AddLibraryFinePayment />
+            </RoleRoute>
+          }
+        />
 
-<Route
-  path="/student-marks"
-  element={
-    <PrivateRoute>
-      <StudentMarks />
-    </PrivateRoute>
-  }
-/>
+        <Route
+          path="/library-fine-payments/edit/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <EditLibraryFinePayment />
+            </RoleRoute>
+          }
+        />
 
-<Route
-  path="/timetable"
-  element={
-    <PrivateRoute>
-      <Timetable />
-    </PrivateRoute>
-  }
-/>
-<Route
-  path="/timetable/add"
-  element={
-    <PrivateRoute>
-      <AddTimetable />
-    </PrivateRoute>
-  }
-/>
+        <Route
+          path="/library-fine-payments/view/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <ViewLibraryFinePayment />
+            </RoleRoute>
+          }
+        />
 
-<Route
-  path="/timetable/edit/:id"
-  element={
-    <PrivateRoute>
-      <EditTimetable />
-    </PrivateRoute>
-  }
-/>
 
-<Route
-  path="/timetable/view/:id"
-  element={
-    <PrivateRoute>
-      <ViewTimetable />
-    </PrivateRoute>
-  }
-/>
+        {/* =================================================
+            OPERATIONS - ADMIN
+        ================================================= */}
 
-<Route
-  path="/report-card"
-  element={
-    <PrivateRoute>
-      <ReportCard />
-    </PrivateRoute>
-  }
-/>
+        <Route
+          path="/admission-inquiry"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <AdmissionInquiry />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/admission-follow-up"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <AdmissionFollowUp />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/achievement"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <Achievement />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/lost-and-found"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <LostAndFound />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/lost-and-found/add"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <AddLostAndFound />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/lost-and-found/edit/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <EditLostAndFound />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/lost-and-found/view/:id"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <ViewLostAndFound />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/school-transfers"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <SchoolTransfer />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/branch-transfers"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN"
+              ]}
+            >
+              <BranchTransfer />
+            </RoleRoute>
+          }
+        />
+
+
+        {/* =================================================
+            EVENTS - ADMIN
+        ================================================= */}
+
+        <Route
+          path="/events"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <Events />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/event-registrations"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <EventRegistrations />
+            </RoleRoute>
+          }
+        />
+
+        <Route
+          path="/event-payments"
+          element={
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
+              <EventPayments />
+            </RoleRoute>
+          }
+        />
+
+
+        {/* =================================================
+            AI - ADMIN ONLY
+        ================================================= */}
 
         <Route
           path="/ai"
           element={
-            <PrivateRoute>
+            <RoleRoute
+              allowedRoles={[
+                "SUPER_ADMIN",
+                "SCHOOL_ADMIN"
+              ]}
+            >
               <AIAssistant />
-            </PrivateRoute>
+            </RoleRoute>
           }
         />
-      <Route
-  path="/classes"
-  element={
-    <PrivateRoute>
-      <Classes />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/school-branches"
-  element={
-    <PrivateRoute>
-      <SchoolBranches />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/school-classes"
-  element={
-    <PrivateRoute>
-      <SchoolClasses />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/master-mediums"
-  element={
-    <PrivateRoute>
-      <MasterMediumPage />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/academic-year-sessions"
-  element={<AcademicYearSessions />}
-/>
-
-<Route
-  path="/school-mediums"
-  element={
-    <PrivateRoute>
-      <SchoolMediumPage />
-    </PrivateRoute>
-  }
-/><Route
-  path="/batches"
-  element={
-    <PrivateRoute>
-      <Batch />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/batches/add"
-  element={
-    <PrivateRoute>
-      <AddBatch />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/batches/edit/:id"
-  element={
-    <PrivateRoute>
-      <EditBatch />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/batches/view/:id"
-  element={
-    <PrivateRoute>
-      <ViewBatch />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/exam-timetable"
-  element={
-    <PrivateRoute>
-      <ExamTimetable />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/exam-timetable/add"
-  element={
-    <PrivateRoute>
-      <AddExamTimetable />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/exam-timetable/edit/:id"
-  element={
-    <PrivateRoute>
-      <EditExamTimetable />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/exam-timetable/view/:id"
-  element={
-    <PrivateRoute>
-      <ViewExamTimetable />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/school-periods"
-  element={
-    <PrivateRoute>
-      <SchoolPeriod />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/school-periods/add"
-  element={
-    <PrivateRoute>
-      <AddSchoolPeriod />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/school-periods/edit/:id"
-  element={
-    <PrivateRoute>
-      <EditSchoolPeriod />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/school-periods/view/:id"
-  element={
-    <PrivateRoute>
-      <ViewSchoolPeriod />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/timetable-substitutions"
-  element={
-    <PrivateRoute>
-      <TimeTableSubstitution />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/timetable-substitutions/add"
-  element={
-    <PrivateRoute>
-      <AddTimeTableSubstitution />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/timetable-substitutions/edit/:id"
-  element={
-    <PrivateRoute>
-      <EditTimeTableSubstitution />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/timetable-substitutions/view/:id"
-  element={
-    <PrivateRoute>
-      <ViewTimeTableSubstitution />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/school-transfers"
-  element={
-    <PrivateRoute>
-      <SchoolTransfer />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/branch-transfers"
-  element={
-    <PrivateRoute>
-      <BranchTransfer />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/academic-years"
-  element={
-    <PrivateRoute>
-      <AcademicYears />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/admission-inquiry"
-  element={
-    <PrivateRoute>
-      <AdmissionInquiry />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/admission-follow-up"
-  element={
-    <PrivateRoute>
-      <AdmissionFollowUp />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/achievement"
-  element={
-    <PrivateRoute>
-      <Achievement />
-    </PrivateRoute>
-  }
-/>
-<Route
-  path="/events"
-  element={
-    <PrivateRoute>
-      <Events />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/event-registrations"
-  element={
-    <PrivateRoute>
-      <EventRegistrations />
-    </PrivateRoute>
-  }
-/>
-
-<Route
-  path="/event-payments"
-  element={
-    <PrivateRoute>
-      <EventPayments />
-    </PrivateRoute>
-  }
-/>
 
 
-<Route
-  path="/branches"
-  element={
-    <PrivateRoute>
-      <Branches />
-    </PrivateRoute>
-  }
-/>
+        {/* =================================================
+            FALLBACK
+        ================================================= */}
+
+        <Route
+          path="*"
+          element={
+            <Navigate
+              to="/dashboard"
+              replace
+            />
+          }
+        />
 
       </Routes>
 
     </BrowserRouter>
+
   );
 
 }
+
 
 export default AppRoutes;
